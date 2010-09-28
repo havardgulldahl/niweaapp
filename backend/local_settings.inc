@@ -2,50 +2,17 @@
 
 /* local settings.
 
-you can set the following variables:
+create a class, "localProxy" to customize behavior:
 
-$categoryfeed;
-$storyfeed;
-$categoryids;
+class localProxy extends tagiProxy {
 
-and the following helper funcions
-customfeedgetter($mode, $id)
-
-						<option value="0">Front</option>
-						<option value="1">Hos deg</option>
-						<option value="2">Verden</option>
-						<option value="3">Økonomi</option>
-						<option value="4">Sport</option>
-						<option value="5">Teknologi</option>
-						<option value="6">Kultur</option>
-						<option value="7">Super</option>
-					</select>
-*/
-
-function customfeedgetter($mode, $id) 
-{
-    if($mode == "story") {
-        return "./backend/art2rss.php?id=$id";
-    }
-    $rss = "http://www.nrk.no/nyheiter/siste.rss";
-    switch($id) {
-        case 0: $rss = "http://www.nrk.no/nyheiter/siste.rss"; break;
-        case 1: $rss = "http://www.nrk.no/norge/siste.rss"; break;
-        case 2: $rss = "http://www.nrk.no/verden/siste.rss"; break;
-        case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/siste.rss"; break;
-        case 4: $rss = "http://www.nrksport.no/siste.rss"; break;
-        case 5: $rss = "http://feeds.feedburner.com/nrkbeta?format=xml"; break;
-        case 6: $rss = "http://www.nrk.no/kultur-og-underholdning/siste.rss"; break;
-        #case 7: $rss = "http://www.nrksuper.no/siste.rss"; break;
-    }
-    return $rss;
 }
+
+*/
 
 class localProxy extends tagiProxy {
     
-	protected function getRssById(){		
-    var_dump("HEEEI");
-		
+	protected function getRssById(){
         if($this->mode == "cat") {
             $rss = "http://www.nrk.no/nyheiter/siste.rss";
             switch($this->id) {
@@ -58,20 +25,20 @@ class localProxy extends tagiProxy {
                 case 6: $rss = "http://www.nrk.no/kultur-og-underholdning/siste.rss"; break;
             }
             $this->rss = simplexml_load_file($rss);
-            $this->rss2Array();
+            $this->rss2Array();
         } elseif($this->mode == "story") {
             $ppurl = "http://nrk.no/contentfile/xml/" . $this->id;
             $this->pp2Array($ppurl);
         }
-        header("Content-type: application/json");
-        echo $this->array2Json();
+        header("Content-type: application/json");
+        echo $this->array2Json();
     }
 
     protected function pp2Array($ppurl) {
         $ppdom = simplexml_load_file($ppurl);
         $children = $ppdom->children("http://www.nrk.no/polopoly/export");
         $attrs = $ppdom->attributes("http://www.nrk.no/polopoly/export");
-		$textile = new Textile();
+		$textile = new Textile();
         $itm = array();
         $itm["id"] = $attrs->id;
         $itm["title"] = $attrs->name;
