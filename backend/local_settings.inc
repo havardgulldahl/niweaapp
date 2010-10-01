@@ -10,6 +10,8 @@ class localProxy extends tagiProxy {
 
 */
 
+$ppdom = false;
+
 class localProxy extends tagiProxy {
     
 	protected function getRssById(){
@@ -35,22 +37,37 @@ class localProxy extends tagiProxy {
     }
 
     protected function pp2Array($ppurl) {
+        global $ppdom;
         $ppdom = simplexml_load_file($ppurl);
+        $this->ppdom = $ppdom;
         $children = $ppdom->children("http://www.nrk.no/polopoly/export");
-        $attrs = $ppdom->attributes("http://www.nrk.no/polopoly/export");
+        $ppdom->registerXPathNamespace("pp", "http://www.nrk.no/polopoly/export");
+        $attrs = $ppdom->attributes();
 		$textile = new Textile();
         $itm = array();
-        $itm["id"] = $attrs->id;
-        $itm["title"] = $attrs->name;
-        $itm["lead"] = $textile->TextileThis($children->components->intro->text->p);
-        $itm["text"] = $textile->TextileThis($children->components->body1);
-        $itm["link"] = $attrs->www-url;
-        $itm["shorttitle"] = $children->components->short-title;
+        $itm["id"] = (string) $attrs->id;
+        $stitl = $ppdom->xpath("/pp:content/pp:components/pp:short-title");
+        $itm["shorttitle"] = (string) $stitl;
+        $titl = $ppdom->xpath("/pp:content/pp:components/pp:long-title/pp:text");
+        $itm["title"] = (string) $titl[0];
+        #$itm["lead"] = $textile->TextileThis((string) $children->components->intro->text->p);
+        $itm["lead"] = $textile->TextileThis(strip_tags((string) $children->components->intro->text->p, "<b><i><a><em><strong>"));
+        #$itm["text"] = $textile->TextileThis((string) $children->components->body1);
+        $t = str_replace("text>", "div>", $children->components->body2->text->asXML());
+        #$t = str_replace("<e ", "<a ", $t);
+        #$t = preg_replace('#<e[^>]+\ id="ContentId\(([\.\d]+)\)"[^>]+title="([^"]+)"/>#', '<a href="http://nrk.no/${1}">${2}</a>', $t);
+        $t = preg_replace_callback('#<e[^>]+\ id="ContentId\(([\.\d]+)\)"\ metaid="ContentId\(([\.\d]+)\)"\ title="([^"]+)"/>#', 
+            create_function('$matches', 'return "<a href=\'http://nrk.no/$matches[1]\' title=\'$matches[3]\'>".ppref2title($matches[2])."</a>";'),
+            $t);
+        $itm["text"] = $textile->TextileThis(strip_tags($t, "<p><div><b><i><a><em><strong><img><table><th><td><tr>"));
+        $itm["link"] = (string) $attrs['www-url']; #$attrs->www-url;
+        $itm["shorttitle"] = (string) $children->components['short-title'];
         #$itm["image_thumbnail"] = $children->
         array_push($this->items, $itm);
         
 
     }
+
     /*
             <id>27270842</id> 
             <spitzmarke><![CDATA[ ]]></spitzmarke> 
@@ -112,6 +129,16 @@ hört. ]]></lead>
 
     */
 }
-
+function ppref2title($metaid) {
+    global $ppdom;
+    #$res = $ppdom->xpath("/pp:content/pp:components/pp:long-title/pp:text");
+    $res = $ppdom->xpath("//pp:body2/pp:component-references/pp:component-ref[@metaid='$metaid']/pp:sub-components/pp:sub-component[@group='linktitle']");
+    $retun = "";
+    while(list($el, $val) = each($res)) {
+        var_dump($el, $val);
+    }
+    #var_dump($res);
+    return $retun;
+}
 ?>
 

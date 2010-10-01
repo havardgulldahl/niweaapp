@@ -7,15 +7,16 @@ require_once 'classTextile.php';
 
 class tagiProxy {
 
-	private $catfeed = "http://www.tagesanzeiger.ch/mobile/ipad.html?pw=Iatgof100&amp;type=category&amp;ipad=1&amp;category_id=";
-	private $storyfeed = "http://www.tagesanzeiger.ch/mobile/feed.html?pw=Iatgof100&type=story&story_id=";
+	protected $catfeed = "http://www.tagesanzeiger.ch/mobile/ipad.html?pw=Iatgof100&amp;type=category&amp;ipad=1&amp;category_id=";
+	protected $storyfeed = "http://www.tagesanzeiger.ch/mobile/feed.html?pw=Iatgof100&type=story&story_id=";
 	private $categoryIds = array(0,1,2,3,4,5,6,7,4269);
 	private $errors = array("noid" => "no category id given!", "invalidid" => "invalid category id");
 	public $id;
 	public $mode;
-	private $rss;
-	private $items = array();
-	private $galleries = array();
+    public $customfeedgetter;
+	protected $rss;
+	protected $items = array();
+	protected $galleries = array();
 	
 	public function getJsonByCategoryId($id, $mode){
 		if($this->parseInput($id, $mode)){			
@@ -23,7 +24,7 @@ class tagiProxy {
 		}		
 	}
 	
-	private function parseInput($id, $mode){
+	protected function parseInput($id, $mode){
 		// id check
 		if(!isset($id)){
 			$this->throwError("noid");
@@ -35,7 +36,7 @@ class tagiProxy {
 			return false;
 		}
 		
-		$this->id = $id = intval($_GET['id']);
+		$this->id = trim($_GET['id']);
 		
 		// mode check		
 		switch ($mode) {
@@ -52,10 +53,10 @@ class tagiProxy {
 	}
 	
 	
-	private function getRssById(){		
+	protected function getRssById(){		
 		
-		$feedvar = $this->mode."feed";
-		$this->rss = simplexml_load_file("{$this->$feedvar}{$this->id}");
+        $feedvar = $this->mode."feed";
+        $this->rss = simplexml_load_file("{$this->$feedvar}{$this->id}");
 		$this->rss2Array();
 		
 		header("Content-type: application/json");
@@ -63,7 +64,7 @@ class tagiProxy {
 	}
 	
 	
-	private function array2Json(){
+	protected function array2Json(){
 		$overall = array();
 		$overall['id'] = $this->id;
 		$overall['items'] = $this->items;
@@ -71,7 +72,7 @@ class tagiProxy {
 		return(json_encode($overall));
 	}
 	
-	private function rss2Array(){
+	protected function rss2Array(){
 		// vereinfachen, shorten
 		
 		$textile = new Textile();
@@ -82,8 +83,8 @@ class tagiProxy {
 				break;
 			}
 		
-			$lead = $item->lead;
-			$shortlead = substr($lead, 0, 105) . "…";
+			$lead = ($item->lead) ? $item->lead : $item->description;
+			$shortlead = (strlen($lead) < 105) ? $lead : substr($lead, 0, 105) . "…";
 
 			$itm = array();
 			foreach($item as $k => $v){
@@ -109,8 +110,6 @@ class tagiProxy {
 				else{
 					$itm[$k] = trim((string)$v);
 				}
-				
-				
 			}
 			$itm['shortlead'] = $shortlead;
 			
@@ -122,6 +121,13 @@ class tagiProxy {
 			}
 			$itm['shorttitle'] = $shorttitle;
 			
+            if(!isset($itm['id'])) {
+                $itm['id'] = basename($itm['link']);
+            }
+            $itm['image'] = $item->image_big_ipad;
+            if(!$itm['image']) {
+                @$itm['image'] = (string) $item->enclosure->attributes()->url;
+            }
 			array_push($this->items, $itm);			
 		}
 		
@@ -142,7 +148,7 @@ class tagiProxy {
 		}
 	}
 	
-	private function throwError($key){
+	protected function throwError($key){
 		// TODO 
 		// header("HTTP/1.0 404 Not Found");  
 	}
@@ -150,10 +156,15 @@ class tagiProxy {
 
 };
 
-$tagiProxy = new tagiProxy();
+if(file_exists("local_settings.inc")) {
+    include_once "local_settings.inc";
+}
+if(class_exists("localProxy")) {
+    $tagiProxy = new localProxy();
+} else {
+    $tagiProxy = new tagiProxy();
+}
 $tagiProxy->getJsonByCategoryId($_GET['id'], $_GET['mode']);
 
-
-
-
-
+# vim:fileformat=unix 
+?>

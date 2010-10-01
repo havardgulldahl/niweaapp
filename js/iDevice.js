@@ -4,6 +4,7 @@
 
 // define console.log, if it doesn't exist to avoid errors 
 //please leave this at the beginning and don't put any console.log before this definition
+/*
 if (!window.console || !console.firebug)
 {
 	var names = ["log", "debug", "info", "warn", "error"];
@@ -13,6 +14,7 @@ if (!window.console || !console.firebug)
 		window.console[names[i]] = function() {};
 	}
 }
+*/
 
 (function () {
 	var modules, application, Storage;
@@ -471,22 +473,36 @@ if (!window.console || !console.firebug)
 		showStoryClick = function() {
 			application.setAddress("page/story?id="+$(this).attr("id"));
 		};
-		
-		drawStory = function(id) {
-			var content, item, i, ii, context;
-			
-			item = getStory(id);
+
+        drawStory = function(id) {
+            var item;
+            item = getStory(id);
 			if (!item) {
 				alert('Die Story konnt nicht gefunden werden.');
 				return;
 			}
+            if (!item.text) {
+                console.debug("Getting story from server");
+                $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
+                    var item = data.items[0];
+                    console.debug(data);
+                    drawStoryItem(item);
+                });
+            } else {
+                drawStoryItem(id);
+            }
+
+        };
+		
+		drawStoryItem = function(item) {
+			var content, i, ii, context;
 			
 			content = $('#content');
 			
 			content.html('<div class="long story"><div class="img"><img /><span class="legend"> </span></div><h2 class="title"></h2><p class="lead"/><div class="text"/><div class="context_stories"></div>');
 			
 			content.find('h2').text(item.title);
-			content.find('p.lead').text(item.lead);
+			content.find('p.lead').html(item.lead);
 			content.find('div.text').html(item.text);
 			content.find('.legend').html("<br/>"+item.topelement_image_legend);
 			if (item.image_big_ipad) {
@@ -513,8 +529,6 @@ if (!window.console || !console.firebug)
 
 		};
 		
-		
-		
 		getStory = function(id) {
 			if (stories[id]) {
 				return stories[id];
@@ -522,6 +536,13 @@ if (!window.console || !console.firebug)
 				return null;
 			}
 		};
+
+        getStoryFromServer = function(id) {
+			$.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
+                stories[id] = data[0];
+                //drawStory(id);
+            });
+        };
 		
 		
 		putJsonToStorage = function(data, id) {
@@ -607,6 +628,13 @@ if (!window.console || !console.firebug)
 						// ADD STORY CONTENT
 						.next()
 						.text(item.shortlead);
+                    if (false && !item.text) { // structure not complete. we need to get the story from the server
+                        $.getJSON( './backend/index.php?mode=story&id='+item.id, function(data) {
+                            stories[item.id] = data[0];
+                        });
+                        return;
+                    }
+                    
 				}
 				
 				item = data.items[0];
@@ -619,7 +647,8 @@ if (!window.console || !console.firebug)
 					.prepend('<img width="640" height="385"/>')
 					.children()
 					.first()
-					.attr("src",item.image_big_ipad)
+					//.attr("src",item.image_big_ipad);
+					.attr("src",item.image)
 					// REPLACE SHORT TITLE WITH FULL TITLE FOR LEAD
 					.next()
 					.text(item.title);
