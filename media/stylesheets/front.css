@@ -26,16 +26,16 @@
     top: 7px;
     right: 7px;
     z-index: -20;
-    width: 200px;
+    width: 130px;
 }
 
 .header #tag-logo {
     position: fixed;
-    margin: 3px 20px;
     opacity: 0.8;
     top: 10px;
-    right: 7px;
-    -webkit-transform: rotate(22deg);
+    right: 0px;
+    -webkit-transform: rotate(35deg);
+    background-color: #fff;
 }
 
 .header div#category,
@@ -52,7 +52,7 @@
     color: #ccc;
 }
 
-.header div#category a.currenttarget {
+.header div#category a.current {
     color: #000; 
     font-size: 0.9em; 
     font-weigth: 900;

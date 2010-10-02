@@ -62,7 +62,7 @@ class localProxy extends tagiProxy {
         $t = preg_replace_callback('#<e[^>]+\ id="ContentId\(([\.\d]+)\)"\ metaid="ContentId\(([\.\d]+)\)"\ title="([^"]+)"/>#', 
             create_function('$matches', 'return "<a href=\'http://nrk.no/$matches[1]\' title=\'$matches[3]\'>".ppref2title($matches[2])."</a>";'),
             $t);
-        $itm["text"] = $textile->TextileThis(strip_tags($t, "<p><div><b><i><a><em><strong><img><table><th><td><tr>"));
+        $itm["text"] = $textile->TextileThis(strip_tags($t, "<p><div><b><i><a><em><strong><img><table><th><td><tr><h1><h2><h3><h4><h5><ul><ol><li>"));
         $itm["link"] = (string) $attrs['www-url']; #$attrs->www-url;
         $itm["shorttitle"] = (string) $children->components['short-title'];
         #$itm["image_thumbnail"] = $children->

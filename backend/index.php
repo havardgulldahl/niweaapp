@@ -111,6 +111,7 @@ class tagiProxy {
 					$itm[$k] = trim((string)$v);
 				}
 			}
+			$itm['lead'] = (string) $lead;
 			$itm['shortlead'] = $shortlead;
 			
 			$shorttitle = trim($item->title);

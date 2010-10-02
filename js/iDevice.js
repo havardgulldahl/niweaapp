@@ -20,6 +20,13 @@ if (!window.console || !console.firebug)
 	var modules, application, Storage;
 	
 	modules = {};
+
+    strmax = function(s, len) {
+        if(!s || s.length < len)
+            return s;
+
+        return s.substr(0, len) + ' ...';
+    };
 	
 	application = (function () {
 	
@@ -74,10 +81,6 @@ if (!window.console || !console.firebug)
 				that.init = function () {};
 				
 				$('#logo').click(function() {application.setAddress('page/category?id=0');});
-				
-				$('#category').change(function () {
-					application.setAddress('page/category?id=' + $(this).val());
-				});
 				
 				modules.category.initCategories();
 				
@@ -262,7 +265,14 @@ if (!window.console || !console.firebug)
 			//application.setAddress('page/category?id=' + selected_category);
 	
 			$('#pager').attr('class', 'page-' + selected_category);
-			$('#category').val(selected_category);
+            // set magic class to the current category shortcut
+			$('#category a').each(function(index) { 
+                if(index == parseInt(selected_category, 10)) {
+                    $(this).addClass("current");
+                } else {
+                    $(this).removeClass("current");
+                }
+            });
 		};
 		
 		
@@ -613,6 +623,7 @@ if (!window.console || !console.firebug)
 				
 				for (i = 0; i < 5; i += 1) {
 					item = data.items[i];
+                    console.debug(item);
 					title = item.shorttitle ? item.shorttitle : item.title;
 					div.addClass('content')
 						// ADD STORY CONTAINER
@@ -627,13 +638,7 @@ if (!window.console || !console.firebug)
 						.text(title)
 						// ADD STORY CONTENT
 						.next()
-						.text(item.shortlead);
-                    if (false && !item.text) { // structure not complete. we need to get the story from the server
-                        $.getJSON( './backend/index.php?mode=story&id='+item.id, function(data) {
-                            stories[item.id] = data[0];
-                        });
-                        return;
-                    }
+						.text(strmax(item.lead, 105));
                     
 				}
 				
@@ -651,7 +656,10 @@ if (!window.console || !console.firebug)
 					.attr("src",item.image)
 					// REPLACE SHORT TITLE WITH FULL TITLE FOR LEAD
 					.next()
-					.text(item.title);
+					.text(item.title)
+                    // REPLACE SHORT LEAD WITH FULL LEAD
+                    .next()
+                    .text(item.lead);
 			}
 		};
 		
