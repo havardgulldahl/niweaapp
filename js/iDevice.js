@@ -508,7 +508,7 @@ if (!window.console || !console.firebug)
 			if (item.image_big_ipad) {
 				// ADD AN IMAGE, IF ONE IS GIVEN
 				content.find('img')
-					.attr('src', item.image_big_ipad);
+					.attr('src', item.image);
 			}
 			
 			//// TODO: add congtext stories, once we are sure we can provide the content

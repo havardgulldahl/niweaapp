@@ -2,7 +2,7 @@
 
 /* local settings.
 
-create a class, "localProxy" to customize behavior:
+create a class, "localProxy", that extends tagiProxy to customize behavior:
 
 class localProxy extends tagiProxy {
 
@@ -29,7 +29,9 @@ class localProxy extends tagiProxy {
             $this->rss = simplexml_load_file($rss);
             $this->rss2Array();
         } elseif($this->mode == "story") {
+            // pull metadata about the story from the cms
             $ppurl = "http://nrk.no/contentfile/xml/" . $this->id;
+            // then parse it (ugghh)
             $this->pp2Array($ppurl);
         }
         header("Content-type: application/json");
@@ -37,6 +39,7 @@ class localProxy extends tagiProxy {
     }
 
     protected function pp2Array($ppurl) {
+        //parse nrk metadata ("polopoly") and return something useful(!)
         global $ppdom;
         $ppdom = simplexml_load_file($ppurl);
         $this->ppdom = $ppdom;
