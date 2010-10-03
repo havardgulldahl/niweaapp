@@ -17,7 +17,7 @@ function geolocateByPostalcode($code) {
         // (the two first digits being the county code)
         $obj->municipalitycode = $obj->county;
         // get the proper county code
-        $obj->county = substr($obj->county, 0, 2);
+        $obj->county = (int) substr($obj->county, 0, 2);
     }
     return $obj;
 }

@@ -40,6 +40,7 @@ if (!window.console || !console.firebug)
 				navigator.userAgent.indexOf('iPad') !== -1 ||
 				navigator.userAgent.indexOf('Android') !== -1;
 			}());
+
 		
 		request = function (requester, url, data, callback) {
 	
@@ -686,6 +687,22 @@ if (!window.console || !console.firebug)
 
 $(document).ready(function() {
 			       
+        hasGeoSupport = (function() {
+            if(geo_position_js.init()) {
+                geo_position_js.getCurrentPosition(function (obj) {
+                    console.debug("Gps ja");
+                    console.debug(obj);
+                    //Storage.setGeo(obj);
+                }, function (obj) {
+                    console.debug("gps ups");
+                    console.debug(obj);
+                });
+                return true;
+            } else {
+                console.debug("gps_posistion_js.initt() returned false");
+                return false;
+            }
+        }());
 });
 
 

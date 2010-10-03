@@ -13,18 +13,93 @@ class localProxy extends tagiProxy {
 $ppdom = false;
 
 class localProxy extends tagiProxy {
-    
+
+    public function getFeedByCounty($countycode) {
+        // http://no.wikipedia.org/wiki/ISO_3166-2:NO 
+        /*
+        {county:"01",dk:"Østfold",feed:"/ostfold/"}
+        ^@,{county:"02",dk:"Akershus",feed:"/ostlandssendingen/"}
+        ^@,{county:"03",dk:"Oslo",feed:"/ostlandssendingen/"}
+        ^@,{county:"04",dk:"Hedmark",feed:"/hedmarkogoppland/"}
+        ^@,{county:"05",dk:"Oppland",feed:"/hedmarkogoppland/"}
+        ^@,{county:"06",dk:"Buskerud",feed:"/ostafjells/"}
+        ^@,{county:"07",dk:"Vestfold",feed:"/ostafjells/"}
+        ^@,{county:"08",dk:"Telemark",feed:"/ostafjells/"}
+        ^@,{county:"09",dk:"Aust-Agder",feed:"/sorlandet/"}
+        ^@,{county:"10",dk:"Vest-Agder",feed:"/sorlandet/"}
+        ^@,{county:"11",dk:"Rogaland",feed:"/rogaland/"}
+        ^@,{county:"12",dk:"Hordaland",feed:"/hordaland/"}
+        ^@,{county:"14",dk:"Sogn og Fjordane",feed:"/sognogfjordane/"}
+        ^@,{county:"15",dk:"Møre og Romsdal",feed:"/moreogromsdal/"}
+        ^@,{county:"16",dk:"Trøndelag",feed:"/trondelag/"}
+        ^@,{county:"17",dk:"Trøndelag",feed:"/trondelag/"}
+        ^@,{county:"18",dk:"Nordland",feed:"/nordland/"}
+        ^@,{county:"19",dk:"Troms",feed:"/nordnytt/"}
+        ^@,{county:"20",dk:"Finnmark",feed:"/nordnytt/"}
+        ^@,{county:"21",dk:"Svalbard",feed:"/nordnytt/"}
+        ^@,{county:"22",dk:"Jan Mayen",feed:"/nordnytt/"}
+        ^@,{county:"22",dk:"Kontinentalsokkelen",feed:"/ostlandssendingen/"}
+        */
+
+        switch($countycode) {
+            case 1: return "ostfold";
+            case 2: return "ostlandssendingen";
+            case 3: return "ostlandssendingen";
+            case 4: return "hedmarkogoppland";
+            case 5: return "hedmarkogoppland";
+            case 6: return "ostafjells";
+            case 7: return "ostafjells";
+            case 8: return "ostafjells";
+            case 9: return "sorlandet";
+            case 10: return "sorlandet";
+            case 11: return "rogaland";
+            case 12: return "hordaland";
+            case 14: return "sognogfjordane";
+            case 15: return "moreogromsdal";
+            case 16: return "trondelag";
+            case 17: return "trondelag";
+            case 18: return "nordland";
+            case 19: return "nordnytt";
+            case 20: return "nordnytt";
+            case 21: return "nordnytt";
+            case 22: return "nordnytt";
+            case 23: return "ostlandssendingen";
+        }
+    }
+
 	protected function getRssById(){
         if($this->mode == "cat") {
-            $rss = "http://www.nrk.no/nyheiter/siste.rss";
+            $rss = "http://www.nrk.no/nyheiter/toppsaker.rss";
             switch($this->id) {
-                case 0: $rss = "http://www.nrk.no/nyheiter/siste.rss"; break;
-                case 1: $rss = "http://www.nrk.no/norge/siste.rss"; break;
-                case 2: $rss = "http://www.nrk.no/verden/siste.rss"; break;
-                case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/siste.rss"; break;
-                case 4: $rss = "http://www.nrksport.no/siste.rss"; break;
+                case 0: $rss = "http://www.nrk.no/nyheiter/toppsaker.rss"; break;
+                case 1: $rss = "http://www.nrk.no/norge/toppsaker.rss"; break;
+                case 2: $rss = "http://www.nrk.no/verden/toppsaker.rss"; break;
+                case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/toppsaker.rss"; break;
+                case 4: $rss = "http://www.nrksport.no/toppsaker.rss"; break;
                 case 5: $rss = "http://feeds.feedburner.com/nrkbeta?format=xml"; break;
-                case 6: $rss = "http://www.nrk.no/kultur-og-underholdning/siste.rss"; break;
+                case 6: $rss = "http://www.nrk.no/kultur-og-underholdning/toppsaker.rss"; break;
+                case 101: $rss = "http://www.nrk.no/ostfold/toppsaker.rss"; break;
+                case 102: $rss = "http://www.nrk.no/ostlandssendingen/toppsaker.rss"; break;
+                case 103: $rss = "http://www.nrk.no/ostlandssendingen/toppsaker.rss"; break;
+                case 104: $rss = "http://www.nrk.no/hedmarkogoppland/toppsaker.rss"; break;
+                case 105: $rss = "http://www.nrk.no/hedmarkogoppland/toppsaker.rss"; break;
+                case 106: $rss = "http://www.nrk.no/ostafjells/toppsaker.rss"; break;
+                case 107: $rss = "http://www.nrk.no/ostafjells/toppsaker.rss"; break;
+                case 108: $rss = "http://www.nrk.no/ostafjells/toppsaker.rss"; break;
+                case 109: $rss = "http://www.nrk.no/sorlandet/toppsaker.rss"; break;
+                case 110: $rss = "http://www.nrk.no/sorlandet/toppsaker.rss"; break;
+                case 111: $rss = "http://www.nrk.no/rogaland/toppsaker.rss"; break;
+                case 112: $rss = "http://www.nrk.no/hordaland/toppsaker.rss"; break;
+                case 114: $rss = "http://www.nrk.no/sognogfjordane/toppsaker.rss"; break;
+                case 115: $rss = "http://www.nrk.no/moreogromsdal/toppsaker.rss"; break;
+                case 116: $rss = "http://www.nrk.no/trondelag/toppsaker.rss"; break;
+                case 117: $rss = "http://www.nrk.no/trondelag/toppsaker.rss"; break;
+                case 118: $rss = "http://www.nrk.no/nordland/toppsaker.rss"; break;
+                case 119: $rss = "http://www.nrk.no/nordnytt/toppsaker.rss"; break;
+                case 120: $rss = "http://www.nrk.no/nordnytt/toppsaker.rss"; break;
+                case 121: $rss = "http://www.nrk.no/nordnytt/toppsaker.rss"; break;
+                case 122: $rss = "http://www.nrk.no/nordnytt/toppsaker.rss"; break;
+                case 123: $rss = "http://www.nrk.no/ostlandssendingen/toppsaker.rss"; break;
             }
             $this->rss = simplexml_load_file($rss);
             $this->rss2Array();
