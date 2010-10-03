@@ -267,13 +267,20 @@ if (!window.console || !console.firebug)
 	
 			$('#pager').attr('class', 'page-' + selected_category);
             // set magic class to the current category shortcut
+            var _found = false;
 			$('#category a').each(function(index) { 
-                if(index == parseInt(selected_category, 10)) {
+                var i = $(this).attr("id").split("-")[2];
+                if(i == selected_category) {
                     $(this).addClass("current");
+                    _found = true;
                 } else {
                     $(this).removeClass("current");
                 }
             });
+            if(!_found && parseInt(selected_category, 10) > 100) {
+                // geolocal category
+                $("#category-link-99").addClass("current");
+            }
 		};
 		
 		
@@ -622,7 +629,10 @@ if (!window.console || !console.firebug)
 				
 				div.text('');
 				
-				for (i = 0; i < 5; i += 1) {
+                console.debug(data.items);
+                // check no. of stories
+                var _display_stories = Math.min(5, data.items.length); // 5 is default
+				for (i = 0; i < _display_stories; i += 1) {
 					item = data.items[i];
                     console.debug(item);
 					title = item.shorttitle ? item.shorttitle : item.title;

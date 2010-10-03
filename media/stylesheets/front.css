@@ -57,6 +57,13 @@
     font-size: 0.9em; 
     font-weigth: 900;
 }
+
+.header #category-99-settings {
+    display: none;
+
+
+}
+
 .header p {
 	right: 0;
 	margin-bottom: 0.5em;

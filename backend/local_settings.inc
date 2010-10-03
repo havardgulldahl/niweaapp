@@ -70,8 +70,9 @@ class localProxy extends tagiProxy {
 	protected function getRssById(){
         if($this->mode == "cat") {
             $rss = "http://www.nrk.no/nyheiter/toppsaker.rss";
+            $verbose_rss = false;
             switch($this->id) {
-                case 0: $rss = "http://www.nrk.no/nyheiter/toppsaker.rss"; break;
+                case 0: $rss = "http://www.nrk.no/nyheiter/toppsaker.rss"; $verbose_rss = true; break;
                 case 1: $rss = "http://www.nrk.no/norge/toppsaker.rss"; break;
                 case 2: $rss = "http://www.nrk.no/verden/toppsaker.rss"; break;
                 case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/toppsaker.rss"; break;
@@ -146,6 +147,55 @@ class localProxy extends tagiProxy {
 
     }
 
+	protected function rss2Array(){
+        // our own rss reformatter, adapted to nrk
+		$textile = new Textile();
+        $i = 0;
+		foreach($this->rss->channel->item as $item){
+            ##if($i > 3) break;
+			$itm = array();
+		
+			$itm["lead"] = trim((string) $item->description);
+            // check if description is rich text (html)
+            $isrichtext = false;
+            foreach(array("<p>", "<a>", "<img>") as $el) {
+                if(strpos($itm["lead"], $el) !== false) $isrichtext = true;
+            }
+			foreach($item as $k => $v){
+				$itm[$k] = trim((string)$v);
+			}
+            if($isrichtext) {
+                try {
+                    $html = simplexml_load_string("<root>" . $itm["lead"] . "</root>");
+                    $img = $html->xpath("/root/p/a/img/@src");
+                    @$itm["image"] = (string) $img[0];
+                    $desc = $html->xpath("/root/p");
+                    @$itm["lead"] = (string) $desc[1];
+                    $flash = $html->xpath("/root/p/object");
+                    var_dump(sizeof($flash));
+                    if(sizeof($flash) > 0) {
+                        // this is a flash item. should probably skip it as long as iOS chokes on flash
+                        continue;
+                    }
+                } catch(Exception $e) {}
+            }
+			$itm["shortlead"] = (strlen($itm["lead"]) < 105) ? $itm["lead"] : substr($itm["lead"], 0, 105) . "…";
+			$itm['shorttitle'] = ( strlen($itm["title"] < 45) ) ? $itm["title"] : substr($itm["title"], 0, 42) . "…";
+            try {
+                $d = @date_parse_from_format('D, d M Y H:i:s O', $itm["pubDate"]);
+                $itm["epoch"] = @mktime($d["year"], $d["month"], $d["day"], $d["hour"], $d["minute"], $d["second"]);
+            } catch(Exception $e) {}
+			
+            if(!isset($itm['id'])) {
+                $itm['id'] = basename($itm['link']);
+            }
+
+            $itm['image'] = @str_replace("f169w225", "f169w640", (string) $item->enclosure->attributes()->url);
+			array_push($this->items, $itm);			
+            $i++;
+		}
+	}
+	
     /*
             <id>27270842</id> 
             <spitzmarke><![CDATA[ ]]></spitzmarke> 
