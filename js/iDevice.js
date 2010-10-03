@@ -286,7 +286,7 @@ if (!window.console || !console.firebug)
 		
 		that = {
 			initCategories: function () {
-				var i, container;
+				var i, container, containercount;
 				
 				container = $('#categories');
 				
@@ -295,7 +295,9 @@ if (!window.console || !console.firebug)
 					return;
 				}
 				container.hide();
-				for (i = 0; i < 11; i += 1) {
+                containercount = $('#category a.category-link').length;
+
+				for (i = 0; i < containercount; i += 1) {
 					container.append('<div/>')
 						.children(':last')
 						.attr('id', 'cat-' + i)

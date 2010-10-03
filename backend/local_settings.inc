@@ -70,10 +70,9 @@ class localProxy extends tagiProxy {
 	protected function getRssById(){
         if($this->mode == "cat") {
             $rss = "http://www.nrk.no/nyheiter/toppsaker.rss";
-            $verbose_rss = false;
             switch($this->id) {
-                case 0: $rss = "http://www.nrk.no/nyheiter/toppsaker.rss"; $verbose_rss = true; break;
-                case 1: $rss = "http://www.nrk.no/norge/toppsaker.rss"; break;
+                case 0: $rss = "http://www.nrk.no/toppsaker.rss"; break;
+                case 1: $rss = "http://www.nrk.no/norge/siste.rss"; break;
                 case 2: $rss = "http://www.nrk.no/verden/toppsaker.rss"; break;
                 case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/toppsaker.rss"; break;
                 case 4: $rss = "http://www.nrksport.no/toppsaker.rss"; break;
@@ -161,18 +160,18 @@ class localProxy extends tagiProxy {
             foreach(array("<p>", "<a>", "<img>") as $el) {
                 if(strpos($itm["lead"], $el) !== false) $isrichtext = true;
             }
-			foreach($item as $k => $v){
-				$itm[$k] = trim((string)$v);
+			foreach(array("pubDate", "title", "link") as $k) {
+				$itm[$k] = trim((string)$item->$k);
 			}
             if($isrichtext) {
                 try {
                     $html = simplexml_load_string("<root>" . $itm["lead"] . "</root>");
                     $img = $html->xpath("/root/p/a/img/@src");
-                    @$itm["image"] = (string) $img[0];
+                    $itm["image"] = join("http://nrk.no/", (string) $img[0]);
                     $desc = $html->xpath("/root/p");
-                    @$itm["lead"] = (string) $desc[1];
+                    $itm["lead"] = (string) $desc[1];
                     $flash = $html->xpath("/root/p/object");
-                    var_dump(sizeof($flash));
+                    #var_dump(sizeof($flash));
                     if(sizeof($flash) > 0) {
                         // this is a flash item. should probably skip it as long as iOS chokes on flash
                         continue;
@@ -189,8 +188,9 @@ class localProxy extends tagiProxy {
             if(!isset($itm['id'])) {
                 $itm['id'] = basename($itm['link']);
             }
-
-            $itm['image'] = @str_replace("f169w225", "f169w640", (string) $item->enclosure->attributes()->url);
+            if(isset($item->enclosure)) {
+                $itm['image'] = @str_replace("f169w225", "f169w640", (string) $item->enclosure->attributes()->url);
+            }
 			array_push($this->items, $itm);			
             $i++;
 		}
