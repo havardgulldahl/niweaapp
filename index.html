@@ -11,6 +11,8 @@
 		<meta name="viewport" content="width=device-width, maximum-scale=1.0">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- default, black or black-translucent -->
 		<meta name="format-detection" content="telephone=no">
 		<link rel="apple-touch-icon" href="./faviconiphone.png">
 	</head>
@@ -21,19 +23,29 @@
                 <div id="tag-logo" >Til å ta på</div>
                 <div id="category">
                     <a class="category-link" id="category-link-0" href="#/category?id=0">Alt</a>
-                    <a class="category-link" id="category-link-99" href="#/category?id=1">Hos deg</a><a id="category-99-toggle-menu">...</a>
+                    <a class="category-link" id="category-link-99" href="javascript:void()">Hos deg</a><a id="category-99-toggle-menu">...</a>
                     <div id="category-99-settings" style="display:none;">
                         For å finne nyheter hos deg, må vi vite hvor du er.
+                        <div id="category-99-current" style="display:none"></div>
                         <div id="category-99-settings-gps">
                             <abbr title="Innebygget satelitt-posisjonering">GPS</abbr> er tilgjengelig. 
                             <button id="category-99-settings-gps-activate">Bruk GPS</button>
+                            <br>
+                            <hr>
+                        </div>
+                        <div id="category-99-settings-gps-retry" style="display:none">
+                            Ingen <abbr title="Innebygget satelitt-posisjonering">GPS</abbr> tilgjengelig
+                            <button id="category-99-settings-gps-activate">Prøv på nytt</button>
+                            <br>
+                            <hr>
                         </div>
                         <div id="category-99-settings-manual">
                         <span id="category-99-settings-manual-msg"></span>
-                        Skriv inn postnummer: <input id="category-99-postalcode" type="number" min="0" max="9999">
-                        <br>
+                        Ditt postnummer: <input id="category-99-postalcode" type="number" min="0" max="9999">
+                        <hr>
                         Eller velg fylke:
                             <select id="category-99-select">
+                                <option value="*">----</option>
                                 <option value="101">Østfold</option>
                                 <option value="102">Akershus</option>
                                 <option value="103">Oslo</option>

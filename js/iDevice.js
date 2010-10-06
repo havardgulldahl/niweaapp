@@ -443,7 +443,7 @@ if (!window.console || !console.firebug)
 			categories = {},
 			stories = [],
 			getJsonFromServer, handleJsonFromServer, getJsonFromStorage, initContent, showStoryClick,
-			drawStory, getStory, putJsonToStorage, refreshContent, that;
+			drawStory, getStory, putJsonToStorage, putToStorage, refreshContent, that;
 		
 		getJsonFromServer = function (id) {
 			
@@ -468,6 +468,15 @@ if (!window.console || !console.firebug)
 				putJsonToStorage(data,id);
 			}
 		};
+
+        getGeoJsonFromStorage = function() {
+            var data;
+            try {
+                return JSON.parse(localStorage.getItem("geo"));
+            } catch (e) {
+                return null;
+            }
+        };
 		
 		getJsonFromStorage = function(id) {
 			var data, i, item;
@@ -503,7 +512,9 @@ if (!window.console || !console.firebug)
 			}
             if (!item.text) {
                 console.debug("Getting story from server");
+                $('body').addClass("working");
                 $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
+                    $('body').removeClass("working");
                     var item = data.items[0];
                     console.debug(data);
                     drawStoryItem(item);
@@ -566,6 +577,7 @@ if (!window.console || !console.firebug)
 		
 		
 		putJsonToStorage = function(data, id) {
+            /*
 			try {
 				// one does not get the "Quota exceeded" exceptions
 				// when removing the item before overwriting it...
@@ -577,15 +589,35 @@ if (!window.console || !console.firebug)
 					alert('Quota exceeded!'); //data wasn't successfully saved due to quota exceed so throw an error
 				}
 			}
+            */
+            putToStorage("category"+id, data);
 			that.drawCategory(id);
 		};
+
+        putGeoJsonToStorage = function(data) {
+           return putToStorage("geo", data); 
+        };
+
+        putToStorage = function(key, data) {
+			try {
+				// one does not get the "Quota exceeded" exceptions
+				// when removing the item before overwriting it...
+				// c.f. http://stackoverflow.com/questions/2603682/
+				localStorage.removeItem(key);
+				localStorage.setItem(key, JSON.stringify(data));
+			} catch (e) {
+				if (e === 'QUOTA_EXCEEDED_ERR') {
+					alert('Quota exceeded!'); //data wasn't successfully saved due to quota exceed so throw an error
+				}
+			}
+        };
 		
 		refreshContent = function() {
 			for (var i = 0;i <= categoryCount;  i += 1) {
 				getJsonFromServer(i);
 			}
 		};
-		
+
 		that = {
 			init: function () {
 				initContent();
@@ -656,6 +688,7 @@ if (!window.console || !console.firebug)
 				}
 				
 				item = data.items[0];
+                try {
 				div.children()
 					// THE LEAD STORY HAS A CLASS MORE
 					.first()
@@ -673,6 +706,7 @@ if (!window.console || !console.firebug)
                     // REPLACE SHORT LEAD WITH FULL LEAD
                     .next()
                     .text(item.lead);
+                } catch(e) { console.error(e) }
 			}
 		};
 		
@@ -699,6 +733,7 @@ if (!window.console || !console.firebug)
 
 $(document).ready(function() {
 			       
+   /* 
         hasGeoSupport = (function() {
             if(geo_position_js.init()) {
                 geo_position_js.getCurrentPosition(function (obj) {
@@ -715,6 +750,76 @@ $(document).ready(function() {
                 return false;
             }
         }());
+    */
+    var hasGeoSupport = geo_position_js.init();
+    if(!hasGeoSupport) {
+        $('#category-99-settings-gps').hide();
+        $('#category-99-settings-gps-retry').show();
+    }
+
+    function formatGeo(geo) {
+        console.debug(geo);
+        $('#category-99-current').html(
+            $('<em>').attr("title", "Getting news feed from "+geo.feed).text("Current position is "+geo.countyname)
+            ).show()
+        $('#category-99-select').val(geo.countycode);
+        $('#category-99-postalcode').val(geo.postalcode);
+    };
+    $('#category-99-toggle-menu').toggle(function(ev) {
+        // show menu
+        var geo = JSON.parse(localStorage.getItem("geo"));
+        console.log( "formatgeo: %o", geo);
+        if(geo != null) {
+            // have previous geo setting
+            formatGeo(geo);
+        }
+        $('#category-99-settings').css({"top": ev.target.top, "left": ev.target.left}).slideDown();
+    }, function(ev) {
+        // hide menu
+        $('#category-99-settings').slideUp();
+    });
+    $('#category-99-settings-gps-activate').click(function(ev) {
+        // activate gps
+        console.log("geting geo from gps");
+        geo_position_js.getCurrentPosition(function(gpsobj) {
+            console.log("gpsinfo: %o", gpsobj);
+            $('body').addClass("working");
+            $.get("backend/geolocate.php?gps=" + JSON.stringify(gpsobj), function(geodata) {
+                $('body').removeClass("working");
+                formatGeo(geodata);
+            });
+        });
+    });
+    $('#category-99-postalcode').keyup(function(ev) {
+        // geolocalize from postal code
+        var t,v;
+        t = $(this);
+        try {
+            v = parseInt(t.val(), 10);
+            if(v < 999) return; // we need 4 digits
+        } catch (e) {
+            return;
+        }
+        console.log("geting geo from postalcode %s"+v);
+        $('body').addClass("working");
+        $.get("backend/geolocate.php?postalcode=" + v, function(geodata) {
+            $('body').removeClass("working");
+            formatGeo(geodata);
+        });
+    });
+    var selectTimeout;
+    $('#category-99-select').change(function(ev) {
+        // geolocalize from select list, after a short wait
+        console.log("geting geo from select list");
+        window.clearTimeout(selectTimeout);
+        selectTimeout = window.setTimeout(function() {
+            // create a minimal geo object (look to backend/geolocalize.php for details
+            var geo = {county: parseInt($('#category-99-select').val(), 10) - 100,
+                       countyname: $('#category-99-select :selected').text()};
+                formatGeo(geo);
+            },
+            500);
+    });
 });
 
 

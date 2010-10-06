@@ -128,7 +128,6 @@ class localProxy extends tagiProxy {
         $itm["shorttitle"] = (string) $stitl;
         $titl = $ppdom->xpath("/pp:content/pp:components/pp:long-title/pp:text");
         $itm["title"] = (string) $titl[0];
-        #$itm["lead"] = $textile->TextileThis((string) $children->components->intro->text->p);
         $itm["lead"] = $textile->TextileThis(strip_tags((string) $children->components->intro->text->p, "<b><i><a><em><strong>"));
         #$itm["text"] = $textile->TextileThis((string) $children->components->body1);
         $t = str_replace("text>", "div>", $children->components->body2->text->asXML());
@@ -188,8 +187,13 @@ class localProxy extends tagiProxy {
             if(!isset($itm['id'])) {
                 $itm['id'] = basename($itm['link']);
             }
-            if(isset($item->enclosure)) {
+            if(isset($item->enclosure)) { // get image from feeds that have them
                 $itm['image'] = @str_replace("f169w225", "f169w640", (string) $item->enclosure->attributes()->url);
+            }
+            // get full text body of item (feedburner does this for nrkbeta)
+            $content = $item->children("http://purl.org/rss/1.0/modules/content/");
+            if(sizeof($content) > 0) {
+                $itm["text"] = (string) $content->encoded;
             }
 			array_push($this->items, $itm);			
             $i++;

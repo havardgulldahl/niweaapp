@@ -3,6 +3,10 @@
     z-index: 1;
 }
 
+body.working {
+    cursor: wait !important;
+}
+
 .container {
 	padding: 0.6em 1em;
 	overflow: auto;
@@ -43,7 +47,9 @@
 	position: absolute;
 	bottom: 0;
 	margin: 0 0 0.3em 0;
-} .header div#category a {
+} 
+
+.header div#category a {
 	font-size: 0.7em;
 	font-family: 'Helvetica Neue', Arial, sans-serif;
     text-transform: uppercase;
@@ -60,8 +66,18 @@
 
 .header #category-99-settings {
     display: none;
+    z-index: 99;
+    position: absolute;
+    background-color: #fff;
+    padding: 5px;
+    border: 2px solid #111;
+    border-radius: 9px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+}
 
-
+.header #category-99-toggle-menu {
+    cursor: help;
 }
 
 .header p {
@@ -243,4 +259,18 @@
 
 .content img {
 	margin: 0;
+}
+
+/* emulate native iOS button */
+.button {
+    font-family: Helvetica;
+    font-weight: bold;
+    padding: 15px; 
+    border: 1px solid black;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px; 
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: white;
 }
