@@ -85,7 +85,7 @@ if (!window.console || !console.firebug)
 				
 				modules.category.initCategories();
 				
-				$.address.value(localStorage.getItem('currentPage') || 'category');
+				$.address.value(localStorage.getItem('xxcurrentPage') || 'category');
 				
 				// we set the onAddressChange handler only after
 				// the address init event has been thrown, that way
@@ -171,7 +171,7 @@ if (!window.console || !console.firebug)
 				if ('page' === type) {
 					try {
 						localStorage.removeItem('currentPage');
-						localStorage.setItem('currentPage', uri);
+						//localStorage.setItem('currentPage', uri);
 					} catch (e) {
 						alert(e.message);
 					}
@@ -215,10 +215,13 @@ if (!window.console || !console.firebug)
 			}
 		};
 		goTo = function (id) {
+            if(id==1) id+=100;
+            console.log("Goto cat " + id);
 			application.setAddress('page/category?id=' + id);
 		};
 		
 		slideTo = function (direction, duration) {
+            console.log("sliteDo dir " + direction);
 			var position;
 			
 			if ('number' !== typeof duration) {
@@ -513,6 +516,7 @@ if (!window.console || !console.firebug)
             if (!item.text) {
                 console.debug("Getting story from server");
                 $('body').addClass("working");
+                drawWaitSpinner();
                 $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
                     $('body').removeClass("working");
                     var item = data.items[0];
@@ -559,6 +563,12 @@ if (!window.console || !console.firebug)
 
 
 		};
+
+        drawWaitSpinner = function() {
+            var content;
+            content = $('#content');
+            content.html('<div class="spinner"><p id="spinner"></p></div>');
+        };
 		
 		getStory = function(id) {
 			if (stories[id]) {
