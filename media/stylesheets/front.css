@@ -4,7 +4,6 @@
 
 * {
 	font-size: 1em;
-    z-index: 1;
 }
 
 body.working {
@@ -48,6 +47,7 @@ body.working {
     -webkit-transform: rotate(35deg);
     background-color: #fff;
     font-family: 'Neucha', arial, sans-serif;
+    border-radius: 8px;
 }
 
 .header div#category,
@@ -225,6 +225,11 @@ body.working {
 	margin-bottom: 10px;
 }
 
+.content .story.big img {
+	width: 640px;
+	min-height: 150px;
+}
+
 .content .story.long .img img {
 	width: 100%;
 	min-height: 150px;
@@ -266,15 +271,37 @@ body.working {
 	line-height: 1.3em;
 }
 
+.content .storyimg img {
+    -webkit-box-shadow: #666 -3px -3px 30px;
+    -moz-box-shadow: #666 -3px -3px 30px;
+    box-shadow: #666 -3px -3px 30px;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: white;
+    background-image: none;
+    background-origin: padding-box;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    opacity: 0.9;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
 
-.content img {
+.content .storyimg img {
 	margin: 0;
+    /*-webkit-mask-box-image: url(../images/imagebackground.svg) 0 0 0 0 stretch stretch;*/
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: none;
+    background-origin: padding-box;
 }
 
 /* emulate native iOS button */
-.button {
+button {
     font-family: Helvetica;
-    font-weight: bold;
     padding: 15px; 
     border: 1px solid black;
     border-radius: 8px;
@@ -283,4 +310,8 @@ body.working {
     margin-top: 10px;
     margin-bottom: 10px;
     background-color: white;
+}
+
+#category button {
+    margin: 1px;
 }

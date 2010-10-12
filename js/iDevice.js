@@ -179,12 +179,17 @@ if (!window.console || !console.firebug)
 				}
 			},
 			setProgressBar: function () {
+                console.log("Setprogressbar");
 				if (0 === $('#progress').size()) {
-					$('body').append('<div id="progress"><img src="img/ajax-loader.gif"/> Loading…</div>');
+                    $("#content").html('<div class="spinner"><p id="spinner"></p></div>');
+                    $('body').addClass("working");
+					//$('body').append('<div id="progress"><img src="img/ajax-loader.gif"/> Loading…</div>');
 				}
 			},
 			removeProgressBar: function () {
-				$('#progress').remove();
+                console.log("removeprogressbar");
+				$('div.spinner').remove();
+                $('body').removeClass("working");
 			},
 			get: function (url, data, callback) {
 				request($.get, url, data, callback);
@@ -441,8 +446,7 @@ if (!window.console || !console.firebug)
 	
 	Storage = (function () {
 		//"private" variables:
-		var categoryCount = 10,
-			myPrivateVar = "I can be accessed only from within YAHOO.myProject.myModule.",
+		var categoryCount = 6,
 			categories = {},
 			stories = [],
 			getJsonFromServer, handleJsonFromServer, getJsonFromStorage, initContent, showStoryClick,
@@ -456,7 +460,10 @@ if (!window.console || !console.firebug)
 		handleJsonFromServer = function(data, status) {
 			
 			if (status === 'success' && data) {
-				var id = data.id;
+				var id = parseInt(data.id, 10);
+                if (id > 100) { // special localized hack
+                    id = data.id = 1;
+                }
 				if (id === 0) {
 				  data.category ="Front";	
 				} else if (data.items[0]) {
@@ -515,16 +522,16 @@ if (!window.console || !console.firebug)
 			}
             if (!item.text) {
                 console.debug("Getting story from server");
-                $('body').addClass("working");
-                drawWaitSpinner();
+                //$('body').addClass("working");
+                //drawWaitSpinner();
                 $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
-                    $('body').removeClass("working");
+                    //$('body').removeClass("working");
                     var item = data.items[0];
                     console.debug(data);
                     drawStoryItem(item);
                 });
             } else {
-                drawStoryItem(id);
+                drawStoryItem(item);
             }
 
         };
@@ -605,7 +612,9 @@ if (!window.console || !console.firebug)
 		};
 
         putGeoJsonToStorage = function(data) {
-           return putToStorage("geo", data); 
+            console.log("putgeostorage: %o", data) 
+            getJsonFromServer(data.county+100);
+            return putToStorage("geo", data); 
         };
 
         putToStorage = function(key, data) {
@@ -623,8 +632,19 @@ if (!window.console || !console.firebug)
         };
 		
 		refreshContent = function() {
+            var categoryId; 
 			for (var i = 0;i <= categoryCount;  i += 1) {
-				getJsonFromServer(i);
+                categoryId = i;
+                if(i == 1) { // special category for geoloclalized content
+                    var geo = window.getGeoJsonFromStorage();
+                    console.log("getting spzeal: %o", geo);
+                    try {
+                        if(geo.county)
+                            categoryId = geo.county + 100;
+                    } catch(e) {}
+                }
+                console.log("getting category %o", categoryId);        
+				getJsonFromServer(categoryId);
 			}
 		};
 
@@ -642,7 +662,9 @@ if (!window.console || !console.firebug)
 			},
 			
 			drawCategory: function (id) {
-				var data, div, item, i, title, getCallback;
+				var data, displayStories, div, item, 
+                    i, leadStory, smallStory, storyClass, 
+                    title, getCallback;
 				
 				getCallback = function (item) { 
 					return function () {
@@ -667,56 +689,36 @@ if (!window.console || !console.firebug)
 					// we only rerender if there are no changes.
 					// if the title of the first story didn't change, then the
 					// content didn't change... makes sense, right? right?
+                    // TODO: fix this fallacy
 					return;
 				}
-	
 				
 				div.text('');
-				
-                console.debug(data.items);
-                // check no. of stories
-                var _display_stories = Math.min(5, data.items.length); // 5 is default
-				for (i = 0; i < _display_stories; i += 1) {
-					item = data.items[i];
-                    console.debug(item);
-					title = item.shorttitle ? item.shorttitle : item.title;
-					div.addClass('content')
-						// ADD STORY CONTAINER
-						.append('<div class="story small"></div>')
-						.children(':last')
-						.attr('id', "story_" + item.id)
-						.append('<h2 class="title"/><p class="lead"/>')
-						// MAKE THE STORY CLICKABLE
-						.click(getCallback(item))
-						// ADD STORY TITLE
-						.children(':first')
-						.text(title)
-						// ADD STORY CONTENT
-						.next()
-						.text(strmax(item.lead, 105));
-                    
-				}
-				
+
+
+                leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/></div>');
+
 				item = data.items[0];
-                try {
-				div.children()
-					// THE LEAD STORY HAS A CLASS MORE
-					.first()
-					.removeClass('small')
-					.addClass('big')
-					// ADD LEAD STORY IMAGE
-					.prepend('<img width="640" height="385"/>')
-					.children()
-					.first()
-					//.attr("src",item.image_big_ipad);
-					.attr("src",item.image)
-					// REPLACE SHORT TITLE WITH FULL TITLE FOR LEAD
-					.next()
-					.text(item.title)
-                    // REPLACE SHORT LEAD WITH FULL LEAD
-                    .next()
-                    .text(item.lead);
-                } catch(e) { console.error(e) }
+                $("img", leadStory).attr("src", item.image);
+                $("h2", leadStory).text(item.title).click(getCallback(item));
+                $("p", leadStory).text(item.lead);
+
+                div.addClass('content').append(leadStory);
+				
+                // sanity check no. of stories
+                var displayStories = Math.min(5, data.items.length); // 5 is default
+
+                smallStory = $('<div class="story small"><h2 class="title"/><p class="lead"/></div>');
+
+                // create the "small" stories
+				for (i = 1; i < displayStories; i += 1) {
+					item = data.items[i];
+					title = item.shorttitle ? item.shorttitle : item.title;
+                    itemStory = smallStory.clone();
+                    $("h2", itemStory).text(item.title).click(getCallback(item));
+                    $("p", itemStory).text(strmax(item.lead));
+                    div.append(itemStory);
+				}
 			}
 		};
 		
@@ -742,25 +744,6 @@ if (!window.console || !console.firebug)
 
 
 $(document).ready(function() {
-			       
-   /* 
-        hasGeoSupport = (function() {
-            if(geo_position_js.init()) {
-                geo_position_js.getCurrentPosition(function (obj) {
-                    console.debug("Gps ja");
-                    console.debug(obj);
-                    //Storage.setGeo(obj);
-                }, function (obj) {
-                    console.debug("gps ups");
-                    console.debug(obj);
-                });
-                return true;
-            } else {
-                console.debug("gps_posistion_js.initt() returned false");
-                return false;
-            }
-        }());
-    */
     var hasGeoSupport = geo_position_js.init();
     if(!hasGeoSupport) {
         $('#category-99-settings-gps').hide();
@@ -768,12 +751,11 @@ $(document).ready(function() {
     }
 
     function formatGeo(geo) {
-        console.debug(geo);
         $('#category-99-current').html(
             $('<em>').attr("title", "Getting news feed from "+geo.feed).text("Current position is "+geo.countyname)
             ).show()
-        $('#category-99-select').val(geo.countycode);
-        $('#category-99-postalcode').val(geo.postalcode);
+        $('#category-99-select').val(parseInt(geo.county, 10) +100);
+        $('#category-99-postalcode').val(geo.postalcode || '');
     };
     $('#category-99-toggle-menu').toggle(function(ev) {
         // show menu
@@ -797,6 +779,7 @@ $(document).ready(function() {
             $.get("backend/geolocate.php?gps=" + JSON.stringify(gpsobj), function(geodata) {
                 $('body').removeClass("working");
                 formatGeo(geodata);
+                window.putGeoJsonToStorage(geodata);
             });
         });
     });
@@ -815,6 +798,8 @@ $(document).ready(function() {
         $.get("backend/geolocate.php?postalcode=" + v, function(geodata) {
             $('body').removeClass("working");
             formatGeo(geodata);
+            console.debug(geodata);
+            window.putGeoJsonToStorage(geodata);
         });
     });
     var selectTimeout;
@@ -827,6 +812,7 @@ $(document).ready(function() {
             var geo = {county: parseInt($('#category-99-select').val(), 10) - 100,
                        countyname: $('#category-99-select :selected').text()};
                 formatGeo(geo);
+                window.putGeoJsonToStorage(geo);
             },
             500);
     });

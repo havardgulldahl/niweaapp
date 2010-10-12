@@ -69,9 +69,9 @@ class localProxy extends tagiProxy {
 
 	protected function getRssById(){
         if($this->mode == "cat") {
-            $rss = "http://www.nrk.no/nyheiter/toppsaker.rss";
+            $rss = "http://www.nrk.no/toppsaker.rss";
             switch($this->id) {
-                case 0: $rss = "http://www.nrk.no/toppsaker.rss"; break;
+                case 0: $rss = "http://www.nrk.no/nyheiter/siste.rss"; break;
                 case 1: $rss = "http://www.nrk.no/norge/siste.rss"; break;
                 case 2: $rss = "http://www.nrk.no/verden/toppsaker.rss"; break;
                 case 3: $rss = "http://www.nrk.no/nyheiter/okonomi/toppsaker.rss"; break;
