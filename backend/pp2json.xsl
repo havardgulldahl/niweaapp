@@ -8,24 +8,24 @@
     omit-xml-declaration="yes"
     indent="no"/>
 
-  <xsl:strip-space elements="*"/>
+  <xsl:strip-space elements="pp:div"/>
 
   <xsl:template match="/pp:content">
      {
         
-        'title': "<xsl:value-of select='@name'/>",
-        'id': "<xsl:value-of select='@id'/>",
-        'uri': "<xsl:value-of select='@www-url'/>",
-        'published': "<xsl:value-of select='pp:metadata/pp:nrk-meta/published-time'/>",
-        'published-epoch': "<xsl:value-of select='pp:components/pp:published_time'/>",
-        'updated': "<xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/>",
-        'updated-epoch': "<xsl:value-of select='pp:components/pp:updated_time'/>",
-        'long-title': "<xsl:value-of select='pp:components/pp:long-title/pp:text'/>",
-        'lead': "<xsl:apply-templates select='pp:components/pp:intro/pp:text'/>",
-        'lead-image': <xsl:apply-templates
+        "title": "<xsl:value-of select='@name'/>",
+        "id": "<xsl:value-of select='@id'/>",
+        "uri": "<xsl:value-of select='@www-url'/>",
+        "published": "<xsl:value-of select='pp:metadata/pp:nrk-meta/published-time'/>",
+        "published-epoch": "<xsl:value-of select='pp:components/pp:published_time'/>",
+        "updated": "<xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/>",
+        "updated-epoch": "<xsl:value-of select='pp:components/pp:updated_time'/>",
+        "long-title": '<xsl:value-of select='pp:components/pp:long-title/pp:text'/>',
+        "lead": '<xsl:apply-templates select='pp:components/pp:intro/pp:text'/>',
+        "lead-image": <xsl:apply-templates
         select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
          />,
-        'text': <xsl:choose>
+        "text": '<xsl:choose>
           <xsl:when test="pp:components/pp:body1">
             <xsl:call-template name="body">
             <xsl:with-param name="ref" select="pp:components/pp:body1"/>
@@ -36,8 +36,8 @@
             <xsl:with-param name="ref" select="pp:components/pp:body2"/>
             </xsl:call-template>
            </xsl:when>
-        </xsl:choose>
-     };
+        </xsl:choose>'
+     }
   </xsl:template>
 
   <xsl:template match="pp:text">
@@ -64,6 +64,10 @@
   </xsl:copy>
 </xsl:template>
 
+<xsl:template match="text()" mode="body">
+    <xsl:value-of select="normalize-space(.)"/>
+</xsl:template>
+
   <xsl:template mode="body" match="pp:e">
    <xsl:variable name="id" select="substring-before(substring-after(@id, '('), ')')"/>
    <xsl:variable name="ref" 
@@ -71,17 +75,14 @@
    <xsl:variable name="text"
      select="$ref/pp:sub-components/pp:sub-component[@name='name']/pp:text"/>
    <xsl:choose>
-     <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']">
-       <a> 
+     <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']"><a> 
          <xsl:attribute name="title"><xsl:value-of select="$text"/></xsl:attribute>
          <xsl:attribute name="href"><xsl:value-of select="concat('http://nrk.no/', $id)"/></xsl:attribute>
-         <xsl:value-of select="$text"/>
-       </a>
+         <xsl:value-of select="$text"/></a>
      </xsl:when>
      <xsl:when test="$ref[@input-template='nrk.input.article.imagecrop']">
        <xsl:variable name="imgurl"
-        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=f169w640')"/>
-       <div class="bodyimage">
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=f169w640')"/><div class="bodyimage">
            <img>
              <xsl:attribute name="alt">bilde</xsl:attribute>
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
