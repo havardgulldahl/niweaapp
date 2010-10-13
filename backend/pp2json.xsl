@@ -8,6 +8,8 @@
     omit-xml-declaration="yes"
     indent="no"/>
 
+  <xsl:strip-space elements="*"/>
+
   <xsl:template match="/pp:content">
      {
         
@@ -56,41 +58,40 @@
     </div>
   </xsl:template>
 
-  <xsl:template mode="body" match="pp:h2">
-    <xsl:copy-of select="."/>
-  </xsl:template>
-
-  <xsl:template mode="body" match="pp:p">
-    <p>
-    <xsl:apply-templates select="pp:*" mode="body"/>
-    </p>
-  </xsl:template>
-
-  <xsl:template mode="body" match="pp:strong">
-    <strong><xsl:value-of select="."/></strong>
-  </xsl:template>
-
-  <xsl:template mode="body" match="pp:ul">
-    <ul>
-    <xsl:apply-templates select="pp:*" mode="body"/>
-    </ul>
-  </xsl:template>
-
-  <xsl:template mode="body" match="pp:li">
-    <li>
-    <xsl:apply-templates select="child::*" mode="body"/>
-    </li>
-  </xsl:template>
+<xsl:template match="@*|node()" mode="body">
+  <xsl:copy>
+    <xsl:apply-templates select="@*|node()" mode="body"/>
+  </xsl:copy>
+</xsl:template>
 
   <xsl:template mode="body" match="pp:e">
    <xsl:variable name="id" select="substring-before(substring-after(@id, '('), ')')"/>
-   <xsl:variable name="text" 
-     select="//pp:component-references/pp:component-ref[@id='$id']/pp:sub-components/pp:sub-component[@group='name']/pp:text"/>
-   <a> 
-     <xsl:attribute name="title"><xsl:value-of select="$text"/></xsl:attribute>
-     <xsl:attribute name="href"><xsl:value-of select="concat('http://nrk.no/', $id)"/></xsl:attribute>
-     <xsl:value-of select="$text"/>
-   </a>
+   <xsl:variable name="ref" 
+     select="//pp:component-references/pp:component-ref[@id=$id]"/>
+   <xsl:variable name="text"
+     select="$ref/pp:sub-components/pp:sub-component[@name='name']/pp:text"/>
+   <xsl:choose>
+     <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']">
+       <a> 
+         <xsl:attribute name="title"><xsl:value-of select="$text"/></xsl:attribute>
+         <xsl:attribute name="href"><xsl:value-of select="concat('http://nrk.no/', $id)"/></xsl:attribute>
+         <xsl:value-of select="$text"/>
+       </a>
+     </xsl:when>
+     <xsl:when test="$ref[@input-template='nrk.input.article.imagecrop']">
+       <xsl:variable name="imgurl"
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=f169w640')"/>
+       <div class="bodyimage">
+           <img>
+             <xsl:attribute name="alt">bilde</xsl:attribute>
+             <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
+           </img>
+           <div class="bodyimage-caption">
+            <xsl:value-of select="$ref/pp:sub-components/pp:sub-component[@name='value']"/>
+           </div>
+       </div>
+     </xsl:when>
+   </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
