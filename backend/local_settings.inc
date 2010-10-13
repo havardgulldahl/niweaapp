@@ -130,7 +130,13 @@ class localProxy extends tagiProxy {
         $itm["title"] = (string) $titl[0];
         $itm["lead"] = $textile->TextileThis(strip_tags((string) $children->components->intro->text->p, "<b><i><a><em><strong>"));
         #$itm["text"] = $textile->TextileThis((string) $children->components->body1);
-        $t = str_replace("text>", "div>", $children->components->body2->text->asXML());
+        $body = $children->components->body2->text->asXML();
+        if(!$body) {
+            $body = $children->components->body1->text->asXML();
+        }
+
+        var_dump($itm, $body);
+        $t = str_replace("text>", "div>", $body);
         #$t = str_replace("<e ", "<a ", $t);
         #$t = preg_replace('#<e[^>]+\ id="ContentId\(([\.\d]+)\)"[^>]+title="([^"]+)"/>#', '<a href="http://nrk.no/${1}">${2}</a>', $t);
         $t = preg_replace_callback('#<e[^>]+\ id="ContentId\(([\.\d]+)\)"\ metaid="ContentId\(([\.\d]+)\)"\ title="([^"]+)"/>#', 
