@@ -69,7 +69,7 @@
   </xsl:copy>
 </xsl:template>
 
-<xsl:template match="text()" mode="body">
+<xsl:template match="text()" mode="remove-space">
     <xsl:value-of select="normalize-space(.)"/>
 </xsl:template>
 
@@ -77,20 +77,50 @@
    <xsl:variable name="id" select="substring-before(substring-after(@id, '('), ')')"/>
    <xsl:variable name="ref" 
      select="//pp:component-references/pp:component-ref[@id=$id]"/>
-   <xsl:variable name="text"
-     select="$ref/pp:sub-components/pp:sub-component[@name='name']/pp:text"/>
    <xsl:choose>
-     <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']"><a> 
+     <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']">
+       <xsl:choose>
+         <xsl:when test="$ref/pp:sub-components/pp:sub-component[@group='linktitle']">
+           <xsl:variable name="text"
+             select="$ref/pp:sub-components/pp:sub-component[@group='linktitle']"/>
+         </xsl:when>
+         <xsl:otherwise>
+           <xsl:variable name="text"
+             select="$ref/pp:sub-components/pp:sub-component[@group='polopoly.Content']/pp:text"/>
+         </xsl:otherwise>
+       </xsl:choose>
+        <a class="e"> 
          <xsl:attribute name="title"><xsl:value-of select="$text"/></xsl:attribute>
          <xsl:attribute name="href"><xsl:value-of select="concat('http://nrk.no/', $id)"/></xsl:attribute>
-         <xsl:value-of select="$text"/></a>
+         <xsl:value-of select="$text"/>
+        </a>
      </xsl:when>
      <xsl:when test="$ref[@input-template='nrk.input.article.imagecrop']">
+       <xsl:variable name="cropdef"
+           select="$ref/pp:sub-components/pp:sub-component[@group='cropdef']"/>
+       <xsl:variable name="aspect"
+           select="substring-before($cropdef, 'CropList')"/>
+       <xsl:variable name="size"
+           select="$ref/pp:sub-components/pp:sub-component[@name='SELECTED_LOGICAL_IMAGE_SIZE']"/>
+       <xsl:variable name="width">
+           <xsl:choose>
+              <xsl:when test="$size = 'S'">w100</xsl:when> 
+              <xsl:when test="$size = 'L'">w200</xsl:when> 
+              <xsl:when test="$size = 'XL'">w450</xsl:when> 
+              <xsl:otherwise>w200</xsl:otherwise> 
+           </xsl:choose>
+       </xsl:variable>
        <xsl:variable name="imgurl"
-        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=f169w640')"/><div class="bodyimage">
-           <img>
-             <xsl:attribute name="alt">bilde</xsl:attribute>
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=', $aspect, $width)"/><div class="bodyimage">
+           <img class="e">
+             <xsl:attribute name="alt"></xsl:attribute>
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
+             <xsl:attribute name="size"><xsl:value-of 
+                select="$ref/pp:sub-components/pp:sub-component[@name='SELECTED_LOGICAL_IMAGE_SIZE']"/></xsl:attribute>
+             <xsl:attribute name="align"><xsl:value-of 
+                select="$ref/pp:sub-components/pp:sub-component[@group='align']"/></xsl:attribute>
+             <xsl:attribute name="cropdef"><xsl:value-of 
+                select="$ref/pp:sub-components/pp:sub-component[@group='cropdef']"/></xsl:attribute>
            </img>
            <div class="bodyimage-caption">
             <xsl:value-of select="$ref/pp:sub-components/pp:sub-component[@name='value']"/>
