@@ -43,6 +43,7 @@ if (!window.console || !console.firebug)
 
 		
 		request = function (requester, url, data, callback) {
+            console.log("request");
 	
 			if ('function' === typeof data) {
 				// no data was given
@@ -526,9 +527,9 @@ if (!window.console || !console.firebug)
                 //drawWaitSpinner();
                 $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
                     //$('body').removeClass("working");
-                    var item = data.items[0];
+                    //var item = data.items[0];
                     console.debug(data);
-                    drawStoryItem(item);
+                    drawStoryItem(data.story);
                 });
             } else {
                 drawStoryItem(item);
@@ -541,17 +542,13 @@ if (!window.console || !console.firebug)
 			
 			content = $('#content');
 			
-			content.html('<div class="long story"><div class="img"><img /><span class="legend"> </span></div><h2 class="title"></h2><p class="lead"/><div class="text"/><div class="context_stories"></div>');
+			content.html('<div class="long story"><div class="img"></div><h2 class="title"></h2><p class="lead"/><div class="text"/><div class="context_stories"></div>');
 			
 			content.find('h2').text(item.title);
 			content.find('p.lead').html(item.lead);
 			content.find('div.text').html(item.text);
-			content.find('.legend').html("<br/>"+item.topelement_image_legend);
-			if (item.image_big_ipad) {
-				// ADD AN IMAGE, IF ONE IS GIVEN
-				content.find('img')
-					.attr('src', item.image);
-			}
+            console.log(item.leadImage);
+			content.find('.img').html(item.leadImage);
 			
 			//// TODO: add congtext stories, once we are sure we can provide the content
 			//context = content.find('div.context_stories')

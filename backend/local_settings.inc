@@ -107,10 +107,51 @@ class localProxy extends tagiProxy {
             // pull metadata about the story from the cms
             $ppurl = "http://nrk.no/contentfile/xml/" . $this->id;
             // then parse it (ugghh)
-            $this->pp2Array($ppurl);
+            // $this->pp2Array($ppurl);
+            header("Content-type: application/json; charset=utf-8");
+            echo $this->pp2Json($ppurl);
+            return;
+            
         }
-        header("Content-type: application/json");
+        header("Content-type: application/json; charset=utf-8");
         echo $this->array2Json();
+    }
+
+    protected function pp2Json($ppurl) {
+        $xsl = new XSLTProcessor(); 
+        $xsldoc = new DOMDocument(); 
+        $xsldoc->load("pp2json.xsl"); 
+        $xsl->importStyleSheet($xsldoc); 
+
+        $opts = array(
+            'http' => array(
+                'user_agent' => 'PHP libxml agent',
+            )
+        );
+
+        $context = stream_context_create($opts);
+        libxml_set_streams_context($context);
+
+        // request a file through HTTP
+        $xmldoc = DOMDocument::load($ppurl);
+        #$json["galleries"] = $this->galleries;
+        $data = (array) simplexml_load_string(str_replace('xmlns="http://www.nrk.no/polopoly/export"', '', $xsl->transformToXML($xmldoc)));
+        $story = array();
+        foreach ($data as $k=>$v)  {
+            switch($k) {
+                case "text": 
+                case "lead": 
+                case "leadImage": 
+                    $s = $v->children();
+                    $story[$k] = $s->asXml(); break;
+                default: 
+                    $story[$k] = $v; break;
+            }
+        }
+        $jsn = array("id" => $this->id,
+                     "story" => $story);
+        return json_encode($jsn);
+
     }
 
     protected function pp2Array($ppurl) {
@@ -277,6 +318,25 @@ function ppref2title($metaid) {
     }
     #var_dump($res);
     return $retun;
+}
+function unserialize_xml($input, $callback = null, $recurse = false)
+/* bool/array unserialize_xml ( string $input [ , callback $callback ] )
+ * Unserializes an XML string, returning a multi-dimensional associative array, optionally runs a callback on all non-array data
+ * Returns false on all failure
+ * Notes:
+    * Root XML tags are stripped
+    * Due to its recursive nature, unserialize_xml() will also support SimpleXMLElement objects and arrays as input
+    * Uses simplexml_load_string() for XML parsing, see SimpleXML documentation for more info
+ */
+{
+    // Get input, loading an xml string with simplexml if its the top level of recursion
+    $data = ((!$recurse) && is_string($input))? simplexml_load_string($input): $input;
+    // Convert SimpleXMLElements to array
+    if ($data instanceof SimpleXMLElement) $data = (array) $data;
+    // Recurse into arrays
+    if (is_array($data)) foreach ($data as &$item) $item = unserialize_xml($item, $callback, true);
+    // Run callback and return
+    return (!is_array($data) && is_callable($callback))? call_user_func($callback, $data): $data;
 }
 ?>
 

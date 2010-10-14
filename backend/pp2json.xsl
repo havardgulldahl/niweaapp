@@ -17,14 +17,14 @@
         <id><xsl:value-of select='@id'/></id>
         <uri><xsl:value-of select='@www-url'/></uri>
         <published><xsl:value-of select='pp:metadata/pp:nrk-meta/published-time'/></published>
-        <published-epoch><xsl:value-of select='pp:components/pp:published_time'/></published-epoch>
+        <publishedEpoch><xsl:value-of select='pp:components/pp:published_time'/></publishedEpoch>
         <updated><xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/></updated>
-        <updated-epoch><xsl:value-of select='pp:components/pp:updated_time'/></updated-epoch>
-        <long-title><xsl:value-of select='pp:components/pp:long-title/pp:text'/></long-title>
+        <updatedEpoch><xsl:value-of select='pp:components/pp:updated_time'/></updatedEpoch>
+        <longTitle><xsl:value-of select='pp:components/pp:long-title/pp:text'/></longTitle>
         <lead><xsl:apply-templates select='pp:components/pp:intro/pp:text'/></lead>
-        <lead-image><xsl:apply-templates
+        <leadImage><xsl:apply-templates
         select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
-         /></lead-image>
+         /></leadImage>
         <text><xsl:choose>
           <xsl:when test="pp:components/pp:body1">
             <xsl:call-template name="body">
