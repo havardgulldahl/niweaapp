@@ -1,31 +1,31 @@
 <?xml version="1.0" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-    xmlns:pp="http://www.nrk.no/polopoly/export">
+    xmlns:pp="http://www.nrk.no/polopoly/export"
+    exclude-result-prefixes="pp">
   <xsl:output 
     method="xml"
     encoding="utf-8"
-    media-type="text/json"
-    omit-xml-declaration="yes"
-    indent="no"/>
+    omit-xml-declaration="no"
+    indent="yes"/>
 
   <xsl:strip-space elements="pp:div"/>
 
   <xsl:template match="/pp:content">
-     {
+     <article >
         
-        "title": "<xsl:value-of select='@name'/>",
-        "id": "<xsl:value-of select='@id'/>",
-        "uri": "<xsl:value-of select='@www-url'/>",
-        "published": "<xsl:value-of select='pp:metadata/pp:nrk-meta/published-time'/>",
-        "published-epoch": "<xsl:value-of select='pp:components/pp:published_time'/>",
-        "updated": "<xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/>",
-        "updated-epoch": "<xsl:value-of select='pp:components/pp:updated_time'/>",
-        "long-title": '<xsl:value-of select='pp:components/pp:long-title/pp:text'/>',
-        "lead": '<xsl:apply-templates select='pp:components/pp:intro/pp:text'/>',
-        "lead-image": <xsl:apply-templates
+        <title><xsl:value-of select='@name'/></title>
+        <id><xsl:value-of select='@id'/></id>
+        <uri><xsl:value-of select='@www-url'/></uri>
+        <published><xsl:value-of select='pp:metadata/pp:nrk-meta/published-time'/></published>
+        <published-epoch><xsl:value-of select='pp:components/pp:published_time'/></published-epoch>
+        <updated><xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/></updated>
+        <updated-epoch><xsl:value-of select='pp:components/pp:updated_time'/></updated-epoch>
+        <long-title><xsl:value-of select='pp:components/pp:long-title/pp:text'/></long-title>
+        <lead><xsl:apply-templates select='pp:components/pp:intro/pp:text'/></lead>
+        <lead-image><xsl:apply-templates
         select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
-         />,
-        "text": '<xsl:choose>
+         /></lead-image>
+        <text><xsl:choose>
           <xsl:when test="pp:components/pp:body1">
             <xsl:call-template name="body">
             <xsl:with-param name="ref" select="pp:components/pp:body1"/>
@@ -36,8 +36,8 @@
             <xsl:with-param name="ref" select="pp:components/pp:body2"/>
             </xsl:call-template>
            </xsl:when>
-        </xsl:choose>'
-     }
+        </xsl:choose></text>
+     </article>
   </xsl:template>
 
   <xsl:template match="pp:text">
@@ -45,10 +45,15 @@
   </xsl:template>
 
   <xsl:template match="pp:component-ref">
-    { 'name': "<xsl:value-of select='@name'/>",
-      'id': "<xsl:value-of select='@id'/>",
-      'title': "<xsl:value-of select='pp:sub-components/pp:sub-component[@name="value"]'/>"
-    }
+       <xsl:variable name="imgurl"
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', @id, '?cropid=f169w640')"/><div class="leadimage">
+           <img alt="{@name}">
+             <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
+           </img>
+           <div class="bodyimage-caption">
+            <xsl:value-of select='pp:sub-components/pp:sub-component[@name="value"]'/>"
+           </div>
+       </div>
   </xsl:template>
 
   <xsl:template name="body">
