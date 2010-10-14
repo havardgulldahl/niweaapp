@@ -206,6 +206,10 @@ body.working {
 	font-size: 1em;
 }
 
+.content .story .published {
+	font-size: 70%;
+    color: #999;
+}
 .content .story.long .title {
 	margin-bottom: 0.1em;
 }

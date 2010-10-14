@@ -722,7 +722,7 @@ if (!window.console || !console.firebug)
 			
 			drawCategory: function (id) {
 				var data, displayStories, div, item, 
-                    i, leadStory, smallStory, storyClass, 
+                    i, leadStory, smallStory, storyClass, t, 
                     title, getCallback;
 				
 				getCallback = function (item) { 
@@ -755,27 +755,33 @@ if (!window.console || !console.firebug)
 				div.text('');
 
 
-                leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/></div>');
+                leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
 				item = data.items[0];
-                $("img", leadStory).attr("src", item.image);
-                $("h2", leadStory).text(item.title).click(getCallback(item));
-                $("p", leadStory).text(item.lead);
+                console.log(item);
+                leadStory.find("img").attr("src", item.image);
+                leadStory.find("h2").text(item.title).click(getCallback(item));
+                leadStory.find("p.lead").text(item.lead);
+                t = timediff(parseInt(item.epoch, 10));
+                leadStory.find("p.published").text(t.toString());
 
                 div.addClass('content').append(leadStory);
 				
                 // sanity check no. of stories
                 var displayStories = Math.min(5, data.items.length); // 5 is default
 
-                smallStory = $('<div class="story small"><h2 class="title"/><p class="lead"/></div>');
+                smallStory = $('<div class="story small"><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
+                console.log(data.items);
                 // create the "small" stories
 				for (i = 1; i < displayStories; i += 1) {
 					item = data.items[i];
 					title = item.shorttitle ? item.shorttitle : item.title;
                     itemStory = smallStory.clone();
-                    $("h2", itemStory).text(item.title).click(getCallback(item));
-                    $("p", itemStory).text(strmax(item.lead));
+                    itemStory.find("h2").text(item.title).click(getCallback(item));
+                    itemStory.find("p.lead").text(strmax(item.lead));
+                    t = timediff(parseInt(item.epoch, 10));
+                    itemStory.find("p.published").text(t.toString());
                     div.append(itemStory);
 				}
 			}

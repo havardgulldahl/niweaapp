@@ -230,8 +230,9 @@ class localProxy extends tagiProxy {
 			$itm["shortlead"] = (strlen($itm["lead"]) < 105) ? $itm["lead"] : substr($itm["lead"], 0, 105) . "…";
 			$itm['shorttitle'] = ( strlen($itm["title"] < 45) ) ? $itm["title"] : substr($itm["title"], 0, 42) . "…";
             try {
-                $d = @date_parse_from_format('D, d M Y H:i:s O', $itm["pubDate"]);
-                $itm["epoch"] = @mktime($d["year"], $d["month"], $d["day"], $d["hour"], $d["minute"], $d["second"]);
+                #$d = @date_parse_from_format('D, d M Y H:i:s O', $itm["pubDate"]);
+                #$itm["epoch"] = @mktime($d["year"], $d["month"], $d["day"], $d["hour"], $d["minute"], $d["second"]) * 1000;
+                $itm["epoch"] = strtotime($itm["pubDate"]) . "000";
             } catch(Exception $e) {}
 			
             if(!isset($itm['id'])) {
