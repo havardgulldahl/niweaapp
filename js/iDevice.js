@@ -29,7 +29,6 @@ if (!window.console || !console.firebug)
     };
 
     timediff = function(published, updated) {
-        console.log(published, updated);
         var nu = (new Date()).getTime();
         var diff  = new Object();
         diff.published = humanTimediff(nu-published);
@@ -50,7 +49,6 @@ if (!window.console || !console.firebug)
             }
             return s;
         };
-        console.log(diff);
         return diff;
     };
 
@@ -104,7 +102,6 @@ if (!window.console || !console.firebug)
 
 		
 		request = function (requester, url, data, callback) {
-            console.log("request");
 	
 			if ('function' === typeof data) {
 				// no data was given
@@ -578,18 +575,12 @@ if (!window.console || !console.firebug)
         drawStory = function(id) {
             var item;
             item = getStory(id);
-			if (!item) {
-				alert('Die Story konnt nicht gefunden werden.');
-				return;
-			}
-            if (!item.text) {
-                console.debug("Getting story from server");
+			if (!item || !item.text) {
                 //$('body').addClass("working");
                 //drawWaitSpinner();
                 $.getJSON( './backend/index.php?mode=story&id='+id, function(data) {
                     //$('body').removeClass("working");
                     //var item = data.items[0];
-                    console.debug(data);
                     drawStoryItem(data.story);
                 });
             } else {
@@ -609,8 +600,13 @@ if (!window.console || !console.firebug)
 			content.find('p.lead').html(item.lead);
             published = timediff(parseInt(item.publishedEpoch, 10), parseInt(item.updatedEpoch, 10));
 			content.find('p.published').html(published.toString());
-			content.find('div.text').html(item.text);
 			content.find('.img').html(item.leadImage);
+			content.find('div.text').html(item.text).find('a').each(function(index) {
+                var ppid = $(this).attr("href").match(/\/(\d\.\d{6,8})/);
+                if(ppid) {  // redirect internal links to ourselves
+                    $(this).attr("href", "#/story?id="+ppid[1]);
+                }
+            });
 			
 			//// TODO: add congtext stories, once we are sure we can provide the content
 			//context = content.find('div.context_stories')
@@ -671,7 +667,6 @@ if (!window.console || !console.firebug)
 		};
 
         putGeoJsonToStorage = function(data) {
-            console.log("putgeostorage: %o", data) 
             getJsonFromServer(data.county+100);
             return putToStorage("geo", data); 
         };
@@ -758,7 +753,6 @@ if (!window.console || !console.firebug)
                 leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
 				item = data.items[0];
-                console.log(item);
                 leadStory.find("img").attr("src", item.image);
                 leadStory.find("h2").text(item.title).click(getCallback(item));
                 leadStory.find("p.lead").text(item.lead);
@@ -772,7 +766,6 @@ if (!window.console || !console.firebug)
 
                 smallStory = $('<div class="story small"><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
-                console.log(data.items);
                 // create the "small" stories
 				for (i = 1; i < displayStories; i += 1) {
 					item = data.items[i];
@@ -825,7 +818,6 @@ $(document).ready(function() {
     $('#category-99-toggle-menu').toggle(function(ev) {
         // show menu
         var geo = JSON.parse(localStorage.getItem("geo"));
-        console.log( "formatgeo: %o", geo);
         if(geo != null) {
             // have previous geo setting
             formatGeo(geo);
@@ -837,9 +829,7 @@ $(document).ready(function() {
     });
     $('#category-99-settings-gps-activate').click(function(ev) {
         // activate gps
-        console.log("geting geo from gps");
         geo_position_js.getCurrentPosition(function(gpsobj) {
-            console.log("gpsinfo: %o", gpsobj);
             $('body').addClass("working");
             $.get("backend/geolocate.php?gps=" + JSON.stringify(gpsobj), function(geodata) {
                 $('body').removeClass("working");
@@ -858,19 +848,16 @@ $(document).ready(function() {
         } catch (e) {
             return;
         }
-        console.log("geting geo from postalcode %s"+v);
         $('body').addClass("working");
         $.get("backend/geolocate.php?postalcode=" + v, function(geodata) {
             $('body').removeClass("working");
             formatGeo(geodata);
-            console.debug(geodata);
             window.putGeoJsonToStorage(geodata);
         });
     });
     var selectTimeout;
     $('#category-99-select').change(function(ev) {
         // geolocalize from select list, after a short wait
-        console.log("geting geo from select list");
         window.clearTimeout(selectTimeout);
         selectTimeout = window.setTimeout(function() {
             // create a minimal geo object (look to backend/geolocalize.php for details
