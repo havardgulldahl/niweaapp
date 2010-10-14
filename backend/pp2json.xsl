@@ -110,14 +110,15 @@
            </xsl:choose>
        </xsl:variable>
        <xsl:variable name="imgurl"
-        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=', $aspect, $width)"/><div class="bodyimage">
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', $id, '?cropid=', $aspect, $width)"/>
+        <div>
+          <xsl:attribute name="class">bodyimage align-<xsl:value-of 
+            select="$ref/pp:sub-components/pp:sub-component[@group='align']"/></xsl:attribute>
            <img class="e">
              <xsl:attribute name="alt"></xsl:attribute>
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
              <xsl:attribute name="size"><xsl:value-of 
                 select="$ref/pp:sub-components/pp:sub-component[@name='SELECTED_LOGICAL_IMAGE_SIZE']"/></xsl:attribute>
-             <xsl:attribute name="align"><xsl:value-of 
-                select="$ref/pp:sub-components/pp:sub-component[@group='align']"/></xsl:attribute>
              <xsl:attribute name="cropdef"><xsl:value-of 
                 select="$ref/pp:sub-components/pp:sub-component[@group='cropdef']"/></xsl:attribute>
            </img>
@@ -125,6 +126,17 @@
             <xsl:value-of select="$ref/pp:sub-components/pp:sub-component[@name='value']"/>
            </div>
        </div>
+     </xsl:when>
+     <xsl:when test="$ref[@input-template='nrk.input.articleelement.factbox']">
+      <div class="factbox">
+         <strong class="title"><xsl:value-of select="$ref/@name"/></strong>
+         <div class="factbox-contents">
+            <xsl:apply-templates 
+                mode="body"
+                select="$ref/pp:sub-components/pp:sub-component[@group='polopoly.Content']/pp:text/child::*"/>
+        </div>
+      </div>
+      
      </xsl:when>
    </xsl:choose>
   </xsl:template>
