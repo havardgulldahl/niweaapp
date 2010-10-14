@@ -71,16 +71,22 @@ if (!window.console || !console.firebug)
        diff.toString = function() {
             var s = [];
             if(this.days > 0)
-                s.push(" " + this.days + " dager");
+                s.push(" " + this.days + " " + pluralFlex("dag", this.days));
             if(this.hours > 0)
-                s.push(" " + this.hours + " timer");
-            if(this.minutes > 0)
-                s.push(" " + this.minutes + " minutter");
-            if(this.seconds > 0)
-                s.push(" " + this.seconds + " sekunder");
+                s.push(" " + this.hours + " " + pluralFlex("time", this.hours));
+            if(this.minutes > 0 && this.days == 0)
+                s.push(" " + this.minutes + " " + pluralFlex("minutt", this.minutes));
+            //if(this.seconds > 0)
+            //   s.push(" " + this.seconds + " sekunder");
             return s.join(", ");
        };
        return diff;
+    };
+
+    pluralFlex = function(root, quantity) {
+        if(quantity == 1) return root;
+        if(root.substring(root.length-1) == "e") return root + "r";
+        return root + "er";
     };
 	
 	application = (function () {

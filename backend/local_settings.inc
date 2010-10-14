@@ -148,6 +148,7 @@ class localProxy extends tagiProxy {
                     $story[$k] = $v; break;
             }
         }
+        // creating missing info so we don't have to do it client side
         if($story["published"] && !$story["publishedEpoch"]) $story["publishedEpoch"] = strtotime($story["published"]) . "000";
         if($story["updated"] && $story["updatedEpoch"]) $story["updatedEpoch"] = strtotime($story["updated"]) . "000";
         $jsn = array("id" => $this->id,
