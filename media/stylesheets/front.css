@@ -124,9 +124,8 @@ body.working {
 }
 
 .content .story a {
-	display: block;
-	text-decoration: none;
-	color: #111;
+	text-decoration: underline;
+	color: #999;
 }
 
 .content .story .title {
@@ -230,12 +229,12 @@ body.working {
 	min-height: 150px;
 }
 
-.content .story.long .img img {
-	width: 100%;
+.content .story.long img {
+	width: 449px;
 	min-height: 150px;
 }
 
-.content .story.long .img .legend {
+.content .story.long .bodyimage-caption {
 	color: #777; 
 }
 

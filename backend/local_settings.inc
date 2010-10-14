@@ -148,6 +148,8 @@ class localProxy extends tagiProxy {
                     $story[$k] = $v; break;
             }
         }
+        if($story["published"] && !$story["publishedEpoch"]) $story["publishedEpoch"] = strtotime($story["published"]) . "000";
+        if($story["updated"] && $story["updatedEpoch"]) $story["updatedEpoch"] = strtotime($story["updated"]) . "000";
         $jsn = array("id" => $this->id,
                      "story" => $story);
         return json_encode($jsn);

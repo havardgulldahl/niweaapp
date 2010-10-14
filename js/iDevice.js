@@ -27,6 +27,61 @@ if (!window.console || !console.firebug)
 
         return s.substr(0, len) + ' ...';
     };
+
+    timediff = function(published, updated) {
+        console.log(published, updated);
+        var nu = (new Date()).getTime();
+        var diff  = new Object();
+        diff.published = humanTimediff(nu-published);
+        if(updated > 0) {
+            diff.updated = humanTimediff(updated-published);
+        } else {
+            diff.updated = false;
+        }
+        diff.toString = function() {
+            var s = "";
+            s += "Publisert for ";
+            s += this.published.toString();
+            s += " siden";
+            if(this.updated !== false) {
+                s += " (oppdatert ";
+                s += this.updated.toString();
+                s += " senere)";
+            }
+            return s;
+        };
+        console.log(diff);
+        return diff;
+    };
+
+    humanTimediff = function(tdiff) {
+       var diff = new Object();
+ 
+       diff.days = Math.floor(tdiff/1000/60/60/24);
+       tdiff -= diff.days*1000*60*60*24;
+ 
+       diff.hours = Math.floor(tdiff/1000/60/60);
+       tdiff -= diff.hours*1000*60*60;
+ 
+       diff.minutes = Math.floor(tdiff/1000/60);
+       tdiff -= diff.minutes*1000*60;
+ 
+       diff.seconds = Math.floor(tdiff/1000);
+
+       diff.toString = function() {
+            var s = [];
+            if(this.days > 0)
+                s.push(" " + this.days + " dager");
+            if(this.hours > 0)
+                s.push(" " + this.hours + " timer");
+            if(this.minutes > 0)
+                s.push(" " + this.minutes + " minutter");
+            if(this.seconds > 0)
+                s.push(" " + this.seconds + " sekunder");
+            return s.join(", ");
+       };
+       return diff;
+    };
 	
 	application = (function () {
 	
@@ -538,16 +593,17 @@ if (!window.console || !console.firebug)
         };
 		
 		drawStoryItem = function(item) {
-			var content, i, ii, context;
+			var content, i, ii, context, published;
 			
 			content = $('#content');
 			
-			content.html('<div class="long story"><div class="img"></div><h2 class="title"></h2><p class="lead"/><div class="text"/><div class="context_stories"></div>');
+			content.html('<div class="long story"><div class="img"></div><h2 class="title"></h2><p class="lead"/><p class="published"/><div class="text"/><div class="context_stories"></div>');
 			
 			content.find('h2').text(item.title);
 			content.find('p.lead').html(item.lead);
+            published = timediff(parseInt(item.publishedEpoch, 10), parseInt(item.updatedEpoch, 10));
+			content.find('p.published').html(published.toString());
 			content.find('div.text').html(item.text);
-            console.log(item.leadImage);
 			content.find('.img').html(item.leadImage);
 			
 			//// TODO: add congtext stories, once we are sure we can provide the content

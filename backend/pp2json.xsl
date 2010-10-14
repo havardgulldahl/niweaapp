@@ -20,6 +20,7 @@
         <publishedEpoch><xsl:value-of select='pp:components/pp:published_time'/></publishedEpoch>
         <updated><xsl:value-of select='pp:metadata/pp:nrk-meta/updated-time'/></updated>
         <updatedEpoch><xsl:value-of select='pp:components/pp:updated_time'/></updatedEpoch>
+        <issued><xsl:value-of select='pp:metadata/pp:nrk-meta/issued-time'/></issued>
         <longTitle><xsl:value-of select='pp:components/pp:long-title/pp:text'/></longTitle>
         <lead><xsl:apply-templates select='pp:components/pp:intro/pp:text'/></lead>
         <leadImage><xsl:apply-templates
