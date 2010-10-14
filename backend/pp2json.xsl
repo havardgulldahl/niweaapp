@@ -79,20 +79,18 @@
      select="//pp:component-references/pp:component-ref[@id=$id]"/>
    <xsl:choose>
      <xsl:when test="$ref[@input-template='nrk.input.article.newsandsport']">
-       <xsl:choose>
-         <xsl:when test="$ref/pp:sub-components/pp:sub-component[@group='linktitle']">
-           <xsl:variable name="text"
-             select="$ref/pp:sub-components/pp:sub-component[@group='linktitle']"/>
-         </xsl:when>
-         <xsl:otherwise>
-           <xsl:variable name="text"
-             select="$ref/pp:sub-components/pp:sub-component[@group='polopoly.Content']/pp:text"/>
-         </xsl:otherwise>
-       </xsl:choose>
         <a class="e"> 
-         <xsl:attribute name="title"><xsl:value-of select="$text"/></xsl:attribute>
          <xsl:attribute name="href"><xsl:value-of select="concat('http://nrk.no/', $id)"/></xsl:attribute>
-         <xsl:value-of select="$text"/>
+           <xsl:choose>
+             <xsl:when test="$ref/pp:sub-components/pp:sub-component[@group='linktitle']">
+               <xsl:value-of
+                 select="$ref/pp:sub-components/pp:sub-component[@group='linktitle']"/>
+             </xsl:when>
+             <xsl:otherwise>
+               <xsl:value-of
+                 select="$ref/pp:sub-components/pp:sub-component[@name='name']/pp:text"/>
+             </xsl:otherwise>
+           </xsl:choose>
         </a>
      </xsl:when>
      <xsl:when test="$ref[@input-template='nrk.input.article.imagecrop']">
