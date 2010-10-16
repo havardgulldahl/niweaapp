@@ -1,5 +1,5 @@
 /* Load Google Font API */
-@import url(http://fonts.googleapis.com/css?family=Neucha&subset=latin);
+@import url(http://fonts.googleapis.com/css?family=Cantarell:regular,bold&subset=latin);
 @import url(http://fonts.googleapis.com/css?family=Crimson+Text&subset=latin);
 
 * {
@@ -46,8 +46,8 @@ body.working {
     right: 0px;
     -webkit-transform: rotate(35deg);
     background-color: #fff;
-    font-family: 'Neucha', arial, sans-serif;
     border-radius: 8px;
+    font-family: 'Cantarell', arial;
 }
 
 .header div#category,
@@ -207,6 +207,7 @@ body.working {
 }
 
 .content .story .published {
+    line-height: 1ex;
 	font-size: 70%;
     color: #999;
 }
@@ -256,6 +257,7 @@ body.working {
 }
 
 .content .story.long .text h2 {
+    font-family: 'Crimson Text', serif;
 	margin: 2em 0 0.5em 0;
 }
 
@@ -272,6 +274,39 @@ body.working {
 .text {
 	font-size: 1.25em;
 	line-height: 1.3em;
+}
+
+.story .factbox {
+    font-size: .75em;
+    line-height: .9em;
+    margin: 1em 0.5em;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    width: 4em;
+    float: right;
+    -webkit-box-shadow: #eee 3px 3px 10px;
+    -moz-box-shadow: #eee 3px 3px 10px;
+    box-shadow: #eee 3px 3px 10px;
+    -webkit-transition: width 1s ease;
+    -moz-transition: width 1s ease;
+}
+
+.factbox-contents {
+    padding: 0 1em;
+    margin: 0;
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: height 1s ease;
+    -moz-transition: height 1s ease;
+} 
+
+.boxtitle {
+    font-family: 'Cantarell', arial, sans-serif;
+    font-weight: 900;
+    font-size: .9em;
+    background: #F4BBFF;
+    width: 100%;
+    padding-top: 1em;
 }
 
 .content .storyimg img {
@@ -300,6 +335,10 @@ body.working {
     background-color: transparent;
     background-image: none;
     background-origin: padding-box;
+}
+
+.content .leadimg img {
+    width: 289px;
 }
 
 /* emulate native iOS button */

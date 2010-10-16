@@ -22,10 +22,11 @@ if (!window.console || !console.firebug)
 	modules = {};
 
     strmax = function(s, len) {
+        if(len == null) len = 105;
         if(!s || s.length < len)
             return s;
 
-        return s.substr(0, len) + ' ...';
+        return s.substr(0, len-4) + ' ...';
     };
 
     timediff = function(published, updated) {
@@ -70,12 +71,12 @@ if (!window.console || !console.firebug)
             var s = [];
             if(this.days > 0)
                 s.push(" " + this.days + " " + pluralFlex("dag", this.days));
-            if(this.hours > 0)
+            if(this.days < 4 && this.hours > 0)
                 s.push(" " + this.hours + " " + pluralFlex("time", this.hours));
             if(this.minutes > 0 && this.days == 0)
                 s.push(" " + this.minutes + " " + pluralFlex("minutt", this.minutes));
-            //if(this.seconds > 0)
-            //   s.push(" " + this.seconds + " sekunder");
+            if(s.length == 0 && this.seconds > 0)
+               s.push(" " + this.seconds + " " + pluralFlex("sekund", this.seconds));
             return s.join(", ");
        };
        return diff;
@@ -159,6 +160,7 @@ if (!window.console || !console.firebug)
 			processURI: function (address) {
 				var module, parameters;
 				
+                console.log("processURI: %o", address);
 				application.removeProgressBar();
 								
 				if ('string' === typeof address) {
@@ -214,6 +216,8 @@ if (!window.console || !console.firebug)
 			},
 			
 			setAddress: function (uri) {
+                console.log("setAddress: %o", uri);
+                //this.setProgressBar();
 				var type, parts;
 				
 				window.scroll(0, 0);
@@ -337,6 +341,7 @@ if (!window.console || !console.firebug)
             var _found = false;
 			$('#category a').each(function(index) { 
                 var i = $(this).attr("id").split("-")[2];
+                if(i == "99") i = "1";
                 if(i == selected_category) {
                     $(this).addClass("current");
                     _found = true;
@@ -602,10 +607,17 @@ if (!window.console || !console.firebug)
 			content.find('p.published').html(published.toString());
 			content.find('.img').html(item.leadImage);
 			content.find('div.text').html(item.text).find('a').each(function(index) {
-                var ppid = $(this).attr("href").match(/\/(\d\.\d{6,8})/);
+                var ppid = $(this).attr("href").match(/\/(\d\.\d{5,8})/);
                 if(ppid) {  // redirect internal links to ourselves
                     $(this).attr("href", "#/story?id="+ppid[1]);
                 }
+            });
+            content.find('.text .factbox').toggle(function(ev) {
+                $(this).css("width", "100%");
+                $(this).find(".factbox-contents").css("height", "auto");
+              }, function (ev) {
+                $(this).css("width", "4em");
+                $(this).find(".factbox-contents").css("height", "0");
             });
 			
 			//// TODO: add congtext stories, once we are sure we can provide the content

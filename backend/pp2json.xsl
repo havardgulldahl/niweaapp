@@ -47,7 +47,7 @@
 
   <xsl:template match="pp:component-ref">
        <xsl:variable name="imgurl"
-        select="concat('http://www.nrk.no/contentfile/imagecrop/', @id, '?cropid=f169w640')"/><div class="leadimage">
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', @id, '?cropid=f169w640')"/><div class="leadimg">
            <img alt="{@name}">
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
            </img>
@@ -106,6 +106,7 @@
               <xsl:when test="$size = 'S'">w100</xsl:when> 
               <xsl:when test="$size = 'L'">w200</xsl:when> 
               <xsl:when test="$size = 'XL'">w450</xsl:when> 
+              <xsl:when test="$size = 'XXL'">w900</xsl:when> 
               <xsl:otherwise>w200</xsl:otherwise> 
            </xsl:choose>
        </xsl:variable>
@@ -127,16 +128,30 @@
            </div>
        </div>
      </xsl:when>
+     <!-- don't know how to parse these yet
+     <xsl:when test="$ref[@input-template='nrk.input.articleelement.quote']">
+     <xsl:when test="$ref[@input-template='nrk.input.articleelement.video']">
+     <xsl:when test="$ref[@input-template='nrk.input.articleelement.googlemap']">
+     <xsl:when test="$ref[@input-template='nrk.input.article.magazine']">
+     -->
      <xsl:when test="$ref[@input-template='nrk.input.articleelement.factbox']">
       <div class="factbox">
-         <strong class="title"><xsl:value-of select="$ref/@name"/></strong>
+          <div class="boxtitle"><strong><xsl:value-of select="$ref/@name"/></strong></div>
          <div class="factbox-contents">
             <xsl:apply-templates 
                 mode="body"
                 select="$ref/pp:sub-components/pp:sub-component[@group='polopoly.Content']/pp:text/child::*"/>
         </div>
       </div>
-      
+     </xsl:when>
+     <xsl:when test="$ref[@input-template='nrk.input.articleelement.picturegallery']">
+        <div class="picturegallery">
+          <div class="boxtitle"><strong><xsl:value-of select="$ref/@name"/></strong></div>
+          <a href="$ref/@www-url" ppid="$ref/@id">Vis bildeserien</a>
+        </div>
+     </xsl:when>
+     <xsl:when test="$ref[@input-template='nrk.content.externallinktype.http']">
+       <a href="$ref/@www-url" class="e"><xsl:value-of select="$ref/@name"/></a>
      </xsl:when>
    </xsl:choose>
   </xsl:template>
