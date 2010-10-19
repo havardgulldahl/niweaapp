@@ -118,9 +118,9 @@
            <img class="e">
              <xsl:attribute name="alt"></xsl:attribute>
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
-             <xsl:attribute name="size"><xsl:value-of 
+             <xsl:attribute name="data-size"><xsl:value-of 
                 select="$ref/pp:sub-components/pp:sub-component[@name='SELECTED_LOGICAL_IMAGE_SIZE']"/></xsl:attribute>
-             <xsl:attribute name="cropdef"><xsl:value-of 
+             <xsl:attribute name="data-cropdef"><xsl:value-of 
                 select="$ref/pp:sub-components/pp:sub-component[@group='cropdef']"/></xsl:attribute>
            </img>
            <div class="bodyimage-caption">
@@ -147,11 +147,11 @@
      <xsl:when test="$ref[@input-template='nrk.input.articleelement.picturegallery']">
         <div class="picturegallery">
           <div class="boxtitle"><strong><xsl:value-of select="$ref/@name"/></strong></div>
-          <a href="$ref/@www-url" ppid="$ref/@id">Vis bildeserien</a>
+          <a href="$ref/@www-url" class="link-picturegallery" data-ppid="$ref/@id">Vis bildeserien</a>
         </div>
      </xsl:when>
      <xsl:when test="$ref[@input-template='nrk.content.externallinktype.http']">
-       <a href="$ref/@www-url" class="e"><xsl:value-of select="$ref/@name"/></a>
+       <a href="$ref/@www-url" class="link-external"><xsl:value-of select="$ref/@name"/></a>
      </xsl:when>
    </xsl:choose>
   </xsl:template>
