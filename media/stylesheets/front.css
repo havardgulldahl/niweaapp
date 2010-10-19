@@ -1,6 +1,7 @@
 /* Load Google Font API */
 @import url(http://fonts.googleapis.com/css?family=Cantarell:regular,bold&subset=latin);
-@import url(http://fonts.googleapis.com/css?family=Crimson+Text&subset=latin);
+@import url(http://fonts.googleapis.com/css?family=Philosopher&subset=latin);
+@import url(http://fonts.googleapis.com/css?family=Neuton&subset=latin);
 
 * {
 	font-size: 1em;
@@ -33,7 +34,7 @@ body.working {
     position: fixed;
     top: 7px;
     right: 7px;
-    z-index: -20;
+    z-index: 20;
     width: 130px;
     -webkit-mask-image: -webkit-gradient(linear, left top, 
         left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
@@ -48,6 +49,7 @@ body.working {
     background-color: #fff;
     border-radius: 8px;
     font-family: 'Cantarell', arial;
+    z-index: 21;
 }
 
 .header div#category,
@@ -82,6 +84,8 @@ body.working {
     border-radius: 9px;
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
+    -webkit-transition: height 1s ease;
+    -moz-transition: height 1s ease;
 }
 
 .header #category-99-toggle-menu {
@@ -135,7 +139,7 @@ body.working {
 	padding: 0.4em 0 0.2em 0;
 	font-size: 2em;
 	line-height: 1.3em;
-    font-family: 'Crimson Text', 'Georgia', serif;
+    font-family: 'Philosopher', 'Verdana', sans-serif;
 
 }
 
@@ -207,10 +211,18 @@ body.working {
 }
 
 .content .story .published {
-    line-height: 1ex;
 	font-size: 70%;
     color: #999;
+    line-height: 1ex;
 }
+
+.content .story.long .published {
+    border: #ccc solid 1px;
+    border-width: 1px 0;
+    line-height: 2em;
+    width: 50%;
+}
+
 .content .story.long .title {
 	margin-bottom: 0.1em;
 }
@@ -246,8 +258,8 @@ body.working {
 .content .story.long .text {
 	padding-top: 10px;
 	padding-bottom: 20px;
-	float: left;
 	width: 59%;
+    font-family: 'Neuton', serif;
 }
 
 .content .story.long .text h2,
@@ -257,8 +269,9 @@ body.working {
 }
 
 .content .story.long .text h2 {
-    font-family: 'Crimson Text', serif;
+    font-family: 'Philosopher', 'Verdana', sans-serif;
 	margin: 2em 0 0.5em 0;
+    border-bottom: 1px solid #ccc;
 }
 
 .content .story.long .text h2:first-child {
@@ -282,7 +295,7 @@ body.working {
     margin: 1em 0.5em;
     border: 1px dashed #ccc;
     border-radius: 8px;
-    width: 4em;
+    width: 6em;
     float: right;
     -webkit-box-shadow: #eee 3px 3px 10px;
     -moz-box-shadow: #eee 3px 3px 10px;
@@ -296,6 +309,7 @@ body.working {
     margin: 0;
     height: 0;
     overflow: hidden;
+    word-wrap: break-word;
     -webkit-transition: height 1s ease;
     -moz-transition: height 1s ease;
 } 
@@ -307,6 +321,7 @@ body.working {
     background: #F4BBFF;
     width: 100%;
     padding-top: 1em;
+    overflow: hidden;
 }
 
 .content .storyimg img {
@@ -337,8 +352,8 @@ body.working {
     background-origin: padding-box;
 }
 
-.content .leadimg img {
-    width: 289px;
+.content .story .img .leadimg img {
+    width: 100%;
 }
 
 /* emulate native iOS button */

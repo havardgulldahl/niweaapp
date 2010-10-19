@@ -120,7 +120,7 @@ class localProxy extends tagiProxy {
     protected function pp2Json($ppurl) {
         $xsl = new XSLTProcessor(); 
         $xsldoc = new DOMDocument(); 
-        $xsldoc->load("pp2json.xsl"); 
+        $xsldoc->load("pparticle2xml.xsl");
         $xsl->importStyleSheet($xsldoc); 
 
         $opts = array(
@@ -239,7 +239,8 @@ class localProxy extends tagiProxy {
                 $itm['id'] = basename($itm['link']);
             }
             if(isset($item->enclosure)) { // get image from feeds that have them
-                $itm['image'] = @str_replace("f169w225", "f169w640", (string) $item->enclosure->attributes()->url);
+                $itm['origimage'] = (string) $item->enclosure->attributes()->url;
+                $itm['image'] = @str_replace("f169w225", "f169w640", $itm['origimage']);
             }
             // get full text body of item (feedburner does this for nrkbeta)
             $content = $item->children("http://purl.org/rss/1.0/modules/content/");

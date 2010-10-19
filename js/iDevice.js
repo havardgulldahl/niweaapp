@@ -765,7 +765,15 @@ if (!window.console || !console.firebug)
                 leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
 				item = data.items[0];
-                leadStory.find("img").attr("src", item.image);
+                leadStory.find("img").error({'item':item}, function(ev) {
+                    // image loading failed - try unmodified url if it exists
+                    console.log("image loading failed, trying original %o", ev.data.item.origimage);
+                    if(ev.data.item.origimage) {
+                        $(this).attr("src", ev.data.item.origimage); 
+                    } else {
+                        $(this).hide();
+                    }
+                }).attr("src", item.image);
                 leadStory.find("h2").text(item.title).click(getCallback(item));
                 leadStory.find("p.lead").text(item.lead);
                 t = timediff(parseInt(item.epoch, 10));
@@ -822,7 +830,7 @@ $(document).ready(function() {
 
     function formatGeo(geo) {
         $('#category-99-current').html(
-            $('<em>').attr("title", "Getting news feed from "+geo.feed).text("Current position is "+geo.countyname)
+            $('<em>').attr("title", "Getting news feed from "+geo.feed).text("Henter nyheter fra "+geo.countyname)
             ).show()
         $('#category-99-select').val(parseInt(geo.county, 10) +100);
         $('#category-99-postalcode').val(geo.postalcode || '');
@@ -834,10 +842,10 @@ $(document).ready(function() {
             // have previous geo setting
             formatGeo(geo);
         }
-        $('#category-99-settings').css({"top": ev.target.top, "left": ev.target.left}).slideDown();
+        $('#category-99-settings').css({"top": ev.target.top, "left": ev.target.left}).show().css({ "height": "auto"});
     }, function(ev) {
         // hide menu
-        $('#category-99-settings').slideUp();
+        $('#category-99-settings').css({"height": 0}).hide();
     });
     $('#category-99-settings-gps-activate').click(function(ev) {
         // activate gps
@@ -852,11 +860,15 @@ $(document).ready(function() {
     });
     $('#category-99-postalcode').keyup(function(ev) {
         // geolocalize from postal code
-        var t,v;
+        var t,v, z;
         t = $(this);
         try {
-            v = parseInt(t.val(), 10);
-            if(v < 999) return; // we need 4 digits
+            v = t.val();
+            if(v.length != 4) return; // we need 4 digits
+            for(z=0; z<4; z++) {
+                if(isNaN(parseInt(v.charAt(z), 10)))
+                    return; // not a digit
+            }
         } catch (e) {
             return;
         }
