@@ -251,8 +251,36 @@ body.working {
 	min-height: 150px;
 }
 
+.content .story.long .bodyimage {
+    margin: 1em 0.5em;
+    background-color: #fff;
+}
+
 .content .story.long .bodyimage-caption {
 	color: #777; 
+    font-size: 0.8em;
+	font-style: italic;
+    line-height: 1em;
+    font-family: 'Neuton', serif;
+}
+
+.content .story.long .bodyimage img {
+    width: 100%;
+    min-height: inherit;
+}
+
+.content .story.long .bodyimage.align-right {
+    float: right;
+    clear: right;
+}
+
+.content .story.long .bodyimage.align-left {
+    float: left;
+    clear: left;
+}
+
+.content .story.long .bodyimage.size-L {
+    width: 174px;
 }
 
 .content .story.long .text {
@@ -297,6 +325,7 @@ body.working {
     border-radius: 8px;
     width: 6em;
     float: right;
+    word-wrap: break-word;
     -webkit-box-shadow: #eee 3px 3px 10px;
     -moz-box-shadow: #eee 3px 3px 10px;
     box-shadow: #eee 3px 3px 10px;
@@ -309,16 +338,21 @@ body.working {
     margin: 0;
     height: 0;
     overflow: hidden;
-    word-wrap: break-word;
     -webkit-transition: height 1s ease;
     -moz-transition: height 1s ease;
 } 
+
+.factbox-contents ul {
+    -webkit-padding-start: 0px;
+    font-size: 0.9em;
+}
 
 .boxtitle {
     font-family: 'Cantarell', arial, sans-serif;
     font-weight: 900;
     font-size: .9em;
-    background: #F4BBFF;
+    background-image: -moz-linear-gradient(top, #4477a1, #81a8cb); /* FF3.6 */
+    background-image: -webkit-gradient(linear, 75% 70%, 0% 0%, from(#81A8CB), to(white));
     width: 100%;
     padding-top: 1em;
     overflow: hidden;
