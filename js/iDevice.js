@@ -625,29 +625,49 @@ if (!window.console || !console.firebug)
 			content.find('p.lead').html(item.lead);
             published = timediff(parseInt(item.publishedEpoch, 10), parseInt(item.updatedEpoch, 10));
 			content.find('p.published').text(item.department + " — " + published.toString());
-			content.find('.img').html(item.leadImage);
-			content.find('div.text').html(item.text).find('a').each(function(index) {
-                var ppid = $(this).attr("href").match(/\/(\d\.\d{5,8})/);
-                if(ppid) {  // redirect internal links to ourselves
-                    $('html, body').animate({scrollTop:0}, 'fast');
-                    $(this).attr("href", "#/story?id="+ppid[1]);
-                }
-            });
-            content.find('.text .factbox').toggle(function(ev) {
-                $(this).css("width", "100%");
-                $(this).find(".factbox-contents").css("height", "auto");
-              }, function (ev) {
-                $(this).css("width", "4em");
-                $(this).find(".factbox-contents").css("height", "0");
-            });
-			
-			//// TODO: add congtext stories, once we are sure we can provide the content
-			//context = content.find('div.context_stories')
-			//for (i = 0, ii = item.context_stories.length; i < ii; i += 1) {
-			//	context.append('<a/>')
-			//		.children(':last')
-			//		.text(item.context_stories[i].context_title);
-			//}
+            switch(item.template) {
+              case "picturegallery":
+              //content.find('div.story').append(item.images);
+              content.find('div.story').append(item.images)
+                .find('img')
+                  .each(function(index) {
+                    $(this).error(function(ev) { 
+                        var e = $(this);
+                        var url = 'http://nrk.no/contentfile/file/'+ e.data("ppid") + '!' +
+                            e.data("cropdef") + "/img650x367.jpg";
+                        console.log(url);
+                        e.attr("src", url);
+                        //'http://nrk.no/contentfile/file/1.6739360!f169CropList/img650x367.jpg'
+                    });
+                  });
+                
+              break;
+              case "article":
+                content.find('.img').html(item.leadImage);
+                content.find('div.text').html(item.text).find('a').each(function(index) {
+                    var ppid = $(this).attr("href").match(/\/(\d\.\d{5,8})/);
+                    if(ppid) {  // redirect internal links to ourselves
+                        $('html, body').animate({scrollTop:0}, 'fast');
+                        $(this).attr("href", "#/story?id="+ppid[1]);
+                    }
+                });
+                content.find('.text .factbox').toggle(function(ev) {
+                    $(this).css("width", "100%");
+                    $(this).find(".factbox-contents").css("height", "auto");
+                  }, function (ev) {
+                    $(this).css("width", "4em");
+                    $(this).find(".factbox-contents").css("height", "0");
+                });
+                
+                //// TODO: add congtext stories, once we are sure we can provide the content
+                //context = content.find('div.context_stories')
+                //for (i = 0, ii = item.context_stories.length; i < ii; i += 1) {
+                //	context.append('<a/>')
+                //		.children(':last')
+                //		.text(item.context_stories[i].context_title);
+                //}
+              break;
+            }
 			Hyphenator.config({
 				classname : 'long',
 				donthyphenateclassname: 'title',

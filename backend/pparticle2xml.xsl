@@ -11,8 +11,7 @@
   <xsl:strip-space elements="pp:div"/>
 
   <xsl:template match="/pp:content">
-     <article >
-        
+     <content>
         <title><xsl:value-of select='@name'/></title>
         <id><xsl:value-of select='@id'/></id>
         <uri><xsl:value-of select='@www-url'/></uri>
@@ -22,26 +21,76 @@
         <updatedEpoch><xsl:value-of select='pp:components/pp:updated_time'/></updatedEpoch>
         <issued><xsl:value-of select='pp:metadata/pp:nrk-meta/issued-time'/></issued>
         <longTitle><xsl:value-of select='pp:components/pp:long-title/pp:text'/></longTitle>
-        <lead><xsl:apply-templates select='pp:components/pp:intro/pp:text'/></lead>
-        <leadImage><xsl:apply-templates
-        select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
-         /></leadImage>
-         <department><xsl:value-of select='pp:department-references/pp:department/@name'/></department>
-        <text>
-            <div id="text">
-                <xsl:call-template name="body">
-                <xsl:with-param name="ref" select="pp:components/pp:body1"/>
-                </xsl:call-template>
-                <xsl:call-template name="body">
-                <xsl:with-param name="ref" select="pp:components/pp:body2"/>
-                </xsl:call-template>
-            </div>
-        </text>
-     </article>
+        <department><xsl:value-of select='pp:department-references/pp:department/@name'/></department>
+        <xsl:choose>
+          <xsl:when test="pp:metadata/pp:contentid/@input-template = 'nrk.input.articleelement.picturegallery'">
+            <template>picturegallery</template>
+            <images>
+              <div class="picturegallery">
+              <xsl:apply-templates 
+                select="pp:content-references/pp:content-reference[@input-template='nrk.input.article.imagecrop']"/>
+              </div>
+            </images>
+          </xsl:when>
+          <xsl:when test="pp:metadata/pp:contentid/@input-template = 'nrk.input.article.newsandsport'">
+            <template>article</template>
+            <lead><xsl:apply-templates select='pp:components/pp:intro/pp:text'/></lead>
+            <leadImage><xsl:apply-templates
+            select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
+             /></leadImage>
+            <text>
+                <div id="text">
+                    <xsl:call-template name="body">
+                    <xsl:with-param name="ref" select="pp:components/pp:body1"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="body">
+                    <xsl:with-param name="ref" select="pp:components/pp:body2"/>
+                    </xsl:call-template>
+                </div>
+            </text>
+          </xsl:when>
+        </xsl:choose>
+     </content>
   </xsl:template>
 
   <xsl:template match="pp:text">
     <xsl:copy-of select="child::*"/>
+  </xsl:template>
+
+  <xsl:template match="pp:content-reference">
+       <xsl:variable name="cropdef"
+           select="pp:sub-components/pp:sub-component[@group='cropdef']"/>
+       <xsl:variable name="aspect"
+           select="substring-before($cropdef, 'CropList')"/>
+       <xsl:variable name="size"
+           select="pp:sub-components/pp:sub-component[@name='SELECTED_LOGICAL_IMAGE_SIZE']"/>
+       <xsl:variable name="width">
+           <xsl:choose>
+              <xsl:when test="$size = 'S'">w100</xsl:when> 
+              <xsl:when test="$size = 'L'">w200</xsl:when> 
+              <xsl:when test="$size = 'XL'">w450</xsl:when> 
+              <xsl:when test="$size = 'XXL'">w900</xsl:when> 
+              <xsl:otherwise>w200</xsl:otherwise> 
+           </xsl:choose>
+       </xsl:variable>
+       <xsl:variable name="imgurl"
+        select="concat('http://www.nrk.no/contentfile/imagecrop/', @id, '?cropid=', $aspect, $width)"/>
+       <xsl:variable name="caption"
+        select='pp:sub-components/pp:sub-component[@group="caption"]'/>
+        <div>
+          <xsl:attribute name="class">galleryimagebox size-<xsl:value-of select="$size"/></xsl:attribute>
+           <img class="galleryimage" alt="{@name}">
+             <xsl:attribute name="id"><xsl:value-of select="generate-id()"/></xsl:attribute>
+             <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
+             <xsl:attribute name="data-size"><xsl:value-of select="$size"/></xsl:attribute>
+             <xsl:attribute name="data-cropdef"><xsl:value-of select="$cropdef"/></xsl:attribute>
+             <xsl:attribute name="data-ppid"><xsl:value-of select="@id"/></xsl:attribute>
+           </img>
+           <div class="image-caption">
+            <xsl:if test="string-length($caption) > 0"><xsl:value-of select="$caption"/></xsl:if>
+            <xsl:if test="string-length($caption) = 0"><xsl:value-of select="@name"/></xsl:if>
+           </div>
+       </div>
   </xsl:template>
 
   <xsl:template match="pp:component-ref">
@@ -163,7 +212,15 @@
      <xsl:when test="$ref[@input-template='nrk.content.externallinktype.http']">
        <a class="link-external">
          <xsl:attribute name="href"><xsl:value-of select="$ref/@www-url"/></xsl:attribute>
-         <xsl:value-of select="$ref/@name"/>
+           <xsl:choose>
+             <xsl:when test="$ref/pp:sub-components/pp:sub-component[@group='linktitle']">
+               <xsl:value-of
+                 select="$ref/pp:sub-components/pp:sub-component[@group='linktitle']"/>
+             </xsl:when>
+             <xsl:otherwise>
+                 <xsl:value-of select="$ref/@name"/>
+             </xsl:otherwise>
+           </xsl:choose>
        </a>
      </xsl:when>
      <!-- embed table --> 

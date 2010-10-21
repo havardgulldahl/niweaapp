@@ -141,9 +141,17 @@ class localProxy extends tagiProxy {
             switch($k) {
                 case "text": 
                 case "lead": 
+                case "images":
                 case "leadImage": 
                     $s = $v->children();
                     $story[$k] = $s->asXml(); break;
+                case "imagesx":
+                    $i = array();
+                    foreach($v->children() as $v) {
+                        array_push($i, $v->asXml());
+                    }
+                    $story["images"] = $i; 
+                    break;
                 default: 
                     $story[$k] = $v; break;
             }
