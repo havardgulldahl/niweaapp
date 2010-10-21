@@ -32,29 +32,49 @@ if (!window.console || !console.firebug)
     timediff = function(published, updated) {
         var nu = (new Date()).getTime();
         var diff  = new Object();
-        diff.published = humanTimediff(nu-published);
+        var epochDate = function (msec) {
+            var d = new Date(msec);
+            var mnd = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'august', 'september', 'oktober', 'november', 'desember'];
+            var r = [ d.getDate() , ". ", mnd[d.getMonth()], " ", d.getFullYear() ];
+            var s = "Publisert ";
+            s += r.join("");
+            return s;
+        };
+        diff.published = humanTimediff(nu,published);
         if(updated > 0) {
-            diff.updated = humanTimediff(updated-published);
+            diff.updated = humanTimediff(updated,published);
         } else {
             diff.updated = false;
         }
         diff.toString = function() {
-            var s = "";
-            s += "Publisert for ";
-            s += this.published.toString();
-            s += " siden";
+            var s;
+            if(this.published.days > 14) {
+                s = epochDate(this.published.pub_epoch);
+            } else {
+                s = "Publisert for ";
+                s += this.published.toString();
+                s += " siden";
+            }
             if(this.updated !== false) {
                 s += " (oppdatert ";
-                s += this.updated.toString();
-                s += " senere)";
+                if (this.published.days > 14 && this.updated.days > 14) {
+                    s += epochDate(this.updated.newer_epoch);
+                    s += ")";
+                } else {
+                    s += this.updated.toString();
+                    s += " senere)";
+                }
             }
             return s;
         };
         return diff;
     };
 
-    humanTimediff = function(tdiff) {
+    humanTimediff = function(newerstamp, publishedstamp) {
+       var tdiff = newerstamp - publishedstamp;
        var diff = new Object();
+       diff.pub_epoch = publishedstamp;
+       diff.newer_epoch = newerstamp;
  
        diff.days = Math.floor(tdiff/1000/60/60/24);
        tdiff -= diff.days*1000*60*60*24;
@@ -604,7 +624,7 @@ if (!window.console || !console.firebug)
 			content.find('h2').text(item.title);
 			content.find('p.lead').html(item.lead);
             published = timediff(parseInt(item.publishedEpoch, 10), parseInt(item.updatedEpoch, 10));
-			content.find('p.published').html(published.toString());
+			content.find('p.published').text(item.department + " — " + published.toString());
 			content.find('.img').html(item.leadImage);
 			content.find('div.text').html(item.text).find('a').each(function(index) {
                 var ppid = $(this).attr("href").match(/\/(\d\.\d{5,8})/);

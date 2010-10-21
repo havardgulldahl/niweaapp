@@ -26,6 +26,7 @@
         <leadImage><xsl:apply-templates
         select='pp:components/pp:intro/pp:component-references/pp:component-ref[@input-template="nrk.input.article.imagecrop"]'
          /></leadImage>
+         <department><xsl:value-of select='pp:department-references/pp:department/@name'/></department>
         <text>
             <div id="text">
                 <xsl:call-template name="body">
