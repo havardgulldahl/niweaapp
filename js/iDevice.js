@@ -615,7 +615,7 @@ if (!window.console || !console.firebug)
         };
 		
 		drawStoryItem = function(item) {
-			var content, i, ii, context, published;
+			var content, i, ii, context, gallerylinks, galleryslider, images, published;
 			
 			content = $('#content');
 			
@@ -627,20 +627,65 @@ if (!window.console || !console.firebug)
 			content.find('p.published').text(item.department + " — " + published.toString());
             switch(item.template) {
               case "picturegallery":
-              //content.find('div.story').append(item.images);
+              gallerylinks = {};
+              images = 0;
               content.find('div.story').append(item.images)
                 .find('img')
                   .each(function(index) {
+                    images++;
+                    var el = $(this);
+                    gallerylinks[el.attr("id")] = index;
                     $(this).error(function(ev) { 
+                        var dim;
                         var e = $(this);
+                        switch(e.data("cropdef")) {
+                            case "f169CropList": dim = "650x367"; break;
+                            case "f34CropList": dim = "462x616"; break;
+                        }
                         var url = 'http://nrk.no/contentfile/file/'+ e.data("ppid") + '!' +
-                            e.data("cropdef") + "/img650x367.jpg";
-                        console.log(url);
+                            e.data("cropdef") + "/img" + dim + ".jpg";
                         e.attr("src", url);
-                        //'http://nrk.no/contentfile/file/1.6739360!f169CropList/img650x367.jpg'
+                        // 16:9 'http://nrk.no/contentfile/file/1.6739360!f169CropList/img650x367.jpg'
+                        // 4:3 462x616.jpg
                     });
                   });
-                
+              gallerylinks.length = images;
+              console.log("gallerylinks: %o", gallerylinks);
+              $("#gallerystatus")
+                .data("images", gallerylinks)
+                .bind("update", function(ev) {
+                    console.log("update status");
+                    var currid = $("#galleryimages div.galleryimagebox:first-child img").attr("id");
+                    var links = $(this).data("images");
+                    //$(this).text("bilde "+parseInt(links[currid]+1, 10)+" av "+links.length);
+                })
+                ;
+              $("#playpause").toggle(function() {
+                var run = window.setInterval(function() {
+                    // every step, move top element to the last position
+                    $("#galleryimages div.galleryimagebox:first-child")
+                        .css("opacity", "0")
+                        .appendTo("#galleryimages")
+                        .css("opacity", "");
+                    $("#gallerystatus").trigger("update");
+                    },
+                    2000 //msec
+                );
+                $(this).data("run", run);
+                $(this).text("Pause");
+              }, function() {
+                window.clearInterval($(this).data("run"));
+                $(this).text("Play");
+              });
+              $("#prev").click(function() {
+                $("#galleryimages div.galleryimagebox:last-child").css("opacity", "0").prependTo("#galleryimages").css("opacity", "");
+                $("#gallerystatus").trigger("update");
+              });
+              $("#next").click(function() {
+                $("#galleryimages div.galleryimagebox:first-child").css("opacity", "0").appendTo("#galleryimages").css("opacity", "");
+                $("#gallerystatus").trigger("update");
+              });
+                    
               break;
               case "article":
                 content.find('.img').html(item.leadImage);

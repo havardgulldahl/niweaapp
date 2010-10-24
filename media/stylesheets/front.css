@@ -406,3 +406,54 @@ button {
 #category button {
     margin: 1px;
 }
+
+/* css3 slide show 
+ * courtesy of http://www.deluxeblogtips.com/2010/05/image-slider-pure-css3.html */
+#picturegallery {
+    width: 900px;
+    height: 600px;
+    overflow: hidden;
+    position: relative;
+    margin: 20px auto;
+    background-color: black;
+}
+#picturegallery .galleryimagebox {
+    width: 900px;
+    height: 600px;
+    position: absolute;
+    top: 0;
+    left: -900px;
+    z-index: 1;
+    opacity: 0;
+    transition: all linear 500ms;
+    -o-transition: all linear 500ms;
+    -moz-transition: all linear 500ms;
+    -webkit-transition: all linear 500ms;
+}
+#picturegallery img {
+    height: 507px;
+    width: 900px;
+}
+
+#picturegallery div:first-child {
+    left: 0;
+    opacity: 1;
+    z-index: 9;
+}
+
+#galleryimages bodyimage-caption {
+    color: #ddd;
+}
+    
+
+#gallerycontrol  {
+    background: white;
+    padding: 4px 6px;
+    opacity: .3;
+    position: absolute;
+    z-index: 100;
+    right: 0px;
+    top: 0px;
+}
+
+

@@ -26,9 +26,17 @@
           <xsl:when test="pp:metadata/pp:contentid/@input-template = 'nrk.input.articleelement.picturegallery'">
             <template>picturegallery</template>
             <images>
-              <div class="picturegallery">
-              <xsl:apply-templates 
-                select="pp:content-references/pp:content-reference[@input-template='nrk.input.article.imagecrop']"/>
+              <div id="picturegallery">
+                <div id="galleryimages">
+                  <xsl:apply-templates 
+                    select="pp:content-references/pp:content-reference[@input-template='nrk.input.article.imagecrop']"/>
+                </div>
+                <div id="gallerycontrol">
+                  <button id="playpause">play</button>
+                  <button id="prev">prev</button>
+                  <button id="next">next</button>
+                  <span id="gallerystatus"></span>
+                </div>
               </div>
             </images>
           </xsl:when>
@@ -86,7 +94,7 @@
              <xsl:attribute name="data-cropdef"><xsl:value-of select="$cropdef"/></xsl:attribute>
              <xsl:attribute name="data-ppid"><xsl:value-of select="@id"/></xsl:attribute>
            </img>
-           <div class="image-caption">
+           <div class="bodyimage-caption">
             <xsl:if test="string-length($caption) > 0"><xsl:value-of select="$caption"/></xsl:if>
             <xsl:if test="string-length($caption) = 0"><xsl:value-of select="@name"/></xsl:if>
            </div>
