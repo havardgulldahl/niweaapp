@@ -180,7 +180,7 @@ if (!window.console || !console.firebug)
 			processURI: function (address) {
 				var module, parameters;
 				
-                console.log("processURI: %o", address);
+                //console.log("processURI: %o", address);
 				application.removeProgressBar();
 								
 				if ('string' === typeof address) {
@@ -355,6 +355,7 @@ if (!window.console || !console.firebug)
 			}
 			
 			//application.setAddress('page/category?id=' + selected_category);
+            
 	
 			$('#pager').attr('class', 'page-' + selected_category);
             // set magic class to the current category shortcut
@@ -387,13 +388,14 @@ if (!window.console || !console.firebug)
 					return;
 				}
 				container.hide();
-                containercount = $('#category button.category-link').length;
-                console.log("containercount: %o", containercount);
-
                 $('.category-link').each(function() {
                     $(this).click(function(ev) { window.location = $(this).data('href'); });
                 });
 
+                $('#category-prev').click(function() { slideTo("prev"); });
+                $('#category-next').click(function() { slideTo("next"); });
+
+                containercount = $('#category button.category-link').length;
 				for (i = 0; i < containercount; i += 1) {
 					container.append('<div/>')
 						.children(':last')

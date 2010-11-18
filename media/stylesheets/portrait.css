@@ -7,6 +7,10 @@
     display: none;
 }
 
+.category-link:not(.current) {
+    display: none;
+}
+
 .content .story.big {
 	position: relative;
 	width: 720px;
