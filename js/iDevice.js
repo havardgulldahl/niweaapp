@@ -359,7 +359,7 @@ if (!window.console || !console.firebug)
 			$('#pager').attr('class', 'page-' + selected_category);
             // set magic class to the current category shortcut
             var _found = false;
-			$('#category a').each(function(index) { 
+			$('#category .category-link').each(function(index) { 
                 var i = $(this).attr("id").split("-")[2];
                 if(i == "99") i = "1";
                 if(i == selected_category) {
@@ -387,7 +387,12 @@ if (!window.console || !console.firebug)
 					return;
 				}
 				container.hide();
-                containercount = $('#category a.category-link').length;
+                containercount = $('#category button.category-link').length;
+                console.log("containercount: %o", containercount);
+
+                $('.category-link').each(function() {
+                    $(this).click(function(ev) { window.location = $(this).data('href'); });
+                });
 
 				for (i = 0; i < containercount; i += 1) {
 					container.append('<div/>')
@@ -410,7 +415,6 @@ if (!window.console || !console.firebug)
 					$('body').unbind('touchstart', this.handleTouch);
 					categories.hide();
 				}
-				$('#pager').hide();
 			},
 			init: function (parameters) {
 	
@@ -427,7 +431,6 @@ if (!window.console || !console.firebug)
 					categories.show();
 					$('body').bind('touchstart', this.handleTouch);
 				}
-				$('#pager').show();
 				
 				if ('number' === typeof selected_category && 1 === Math.pow(selected_category - id, 2)) {
 					// the back button has been used, we want a sliding effect...
@@ -672,10 +675,10 @@ if (!window.console || !console.firebug)
                     2000 //msec
                 );
                 $(this).data("run", run);
-                $(this).text("Pause");
+                $(this).text("pause");
               }, function() {
                 window.clearInterval($(this).data("run"));
-                $(this).text("Play");
+                $(this).text("play");
               });
               $("#prev").click(function() {
                 $("#galleryimages div.galleryimagebox:last-child").css("opacity", "0").prependTo("#galleryimages").css("opacity", "");
@@ -716,7 +719,7 @@ if (!window.console || !console.firebug)
 			Hyphenator.config({
 				classname : 'long',
 				donthyphenateclassname: 'title',
-                displaytogglebox: true,
+                //displaytogglebox: true,
                 //hyphenchar: '|',
                 // onhyphenationdonecallback : function () {
                 //     alert('Hyphenation done');
@@ -798,7 +801,7 @@ if (!window.console || !console.firebug)
 			
 			drawCategory: function (id) {
 				var data, displayStories, div, item, 
-                    i, leadStory, smallStory, storyClass, t, 
+                    i, leadStory, storyClass, storyTemplate, t, 
                     title, getCallback;
 				
 				getCallback = function (item) { 
@@ -830,10 +833,12 @@ if (!window.console || !console.firebug)
 				
 				div.text('');
 
+                storyTemplate = $('<div class="story"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/><p class="published"/></div>');
 
-                leadStory = $('<div class="story big"><div class="storyimg"><img/></div><h2 class="title"/><p class="lead"/><p class="published"/></div>');
+                leadStory = storyTemplate.clone().addClass("big");
 
 				item = data.items[0];
+                leadStory.click(getCallback(item));
                 leadStory.find("img").error({'item':item}, function(ev) {
                     // image loading failed - try unmodified url if it exists
                     console.log("image loading failed, trying original %o", ev.data.item.origimage);
@@ -843,7 +848,7 @@ if (!window.console || !console.firebug)
                         $(this).hide();
                     }
                 }).attr("src", item.image);
-                leadStory.find("h2").text(item.title).click(getCallback(item));
+                leadStory.find("h2").text(item.title);
                 leadStory.find("p.lead").text(item.lead);
                 t = timediff(parseInt(item.epoch, 10));
                 leadStory.find("p.published").text(t.toString());
@@ -851,15 +856,18 @@ if (!window.console || !console.firebug)
                 div.addClass('content').append(leadStory);
 				
                 // sanity check no. of stories
-                var displayStories = Math.min(5, data.items.length); // 5 is default
-
-                smallStory = $('<div class="story small"><h2 class="title"/><p class="lead"/><p class="published"/></div>');
+                var displayStories = Math.min(25, data.items.length); // max 25 stories (TODO: why?)
 
                 // create the "small" stories
 				for (i = 1; i < displayStories; i += 1) {
 					item = data.items[i];
 					title = item.shorttitle ? item.shorttitle : item.title;
-                    itemStory = smallStory.clone();
+                    itemStory = storyTemplate.clone().addClass("small").click(getCallback(item));
+                    if(i>4) {
+                        itemStory.addClass("portrait");
+                    }
+                    itemStory.find(".storyimg").addClass("portrait");
+                    itemStory.find("img").attr("src", item.image);
                     itemStory.find("h2").text(item.title).click(getCallback(item));
                     itemStory.find("p.lead").text(strmax(item.lead));
                     t = timediff(parseInt(item.epoch, 10));
@@ -904,17 +912,24 @@ $(document).ready(function() {
         $('#category-99-select').val(parseInt(geo.county, 10) +100);
         $('#category-99-postalcode').val(geo.postalcode || '');
     };
-    $('#category-99-toggle-menu').toggle(function(ev) {
+    $('#category-99-toggle-menu').click(function(ev) {
         // show menu
         var geo = JSON.parse(localStorage.getItem("geo"));
         if(geo != null) {
             // have previous geo setting
             formatGeo(geo);
         }
+        $('<div id="menu-overlay"></div>').click(function(ev) {
+            //hide menu
+            $('#category-99-settings').css({"height": 0}).hide();
+            $("#menu-overlay").detach();
+        }).appendTo("body");
         $('#category-99-settings').css({"top": ev.target.top, "left": ev.target.left}).show().css({ "height": "auto"});
-    }, function(ev) {
-        // hide menu
+    });
+    $('#category-99-close-menu').click(function(ev) {
+        //hide menu
         $('#category-99-settings').css({"height": 0}).hide();
+        $("#menu-overlay").detach();
     });
     $('#category-99-settings-gps-activate').click(function(ev) {
         // activate gps

@@ -6,8 +6,8 @@
 		<link rel="stylesheet" href="media/stylesheets/default.css">
 		<link rel="stylesheet" href="media/stylesheets/front.css">
 		<link rel="stylesheet" href="media/stylesheets/application.css">
-		<link rel="stylesheet" href="media/stylesheets/portrait.css" media="(max-width: 1023px)">
-		<link rel="stylesheet" href="media/stylesheets/landscape.css" media="only screen and (max-device-width: 1024px) and (orientation:landscape)">
+		<link rel="stylesheet" href="media/stylesheets/portrait.css" media="all and (orientation:portrait) ">
+		<link rel="stylesheet" href="media/stylesheets/landscape.css" media="all and (orientation:landscape)">
 		<meta name="viewport" content="width=device-width, maximum-scale=1.0">
 		<meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default"><!-- default, black or black-translucent -->
@@ -15,14 +15,18 @@
 		<link rel="apple-touch-icon" href="./faviconiphone.png">
 	</head>
 	<body>
+        <span class="debug portrait">PORTRAIT MODE</span>
+        <span class="debug landscape">LANDSCAPE MODE</span>
 		<div class="container">
 			<div class="header">
-                <img id="img-logo"  src="media/images/logo.png" alt="Cool futuristic logo" />
+                <img id="img-logo" src="media/images/logo.png" alt="Cool, futuristic logo">
                 <div id="tag-logo" >Til å ta på</div>
                 <div id="category">
-                    <a class="category-link" id="category-link-0" href="#/category?id=0">Alt</a>
-                    <a class="category-link" id="category-link-99" href="#/category?id=1">Hos deg</a><a id="category-99-toggle-menu">...</a>
+                    <button class="category-link" id="category-link-0" data-href="#/category?id=0">Alt</button>
+                    <button class="category-link" id="category-link-99" data-href="#/category?id=1">Hos
+                    deg</button><button id="category-99-toggle-menu">...</button>
                     <div id="category-99-settings" style="display:none;">
+                        <button id="category-99-close-menu">Lukk</button>
                         For å finne nyheter hos deg, må vi vite hvor du er.
                         <div id="category-99-current" style="display:none"></div>
                         <div id="category-99-settings-gps">
@@ -68,11 +72,11 @@
                             </select>
                         </div>
                     </div>
-                    <a class="category-link" id="category-link-2" href="#/category?id=2">Verden</a>
-                    <a class="category-link" id="category-link-3" href="#/category?id=3">Økonomi</a>
-                    <a class="category-link" id="category-link-4" href="#/category?id=4">Sport</a>
-                    <a class="category-link" id="category-link-5" href="#/category?id=5">Teknologi</a>
-                    <a class="category-link" id="category-link-6" href="#/category?id=6">Kultur</a>
+                    <button class="category-link" id="category-link-2" data-href="#/category?id=2">Verden</button>
+                    <button class="category-link" id="category-link-3" data-href="#/category?id=3">Økonomi</button>
+                    <button class="category-link" id="category-link-4" data-href="#/category?id=4">Sport</button>
+                    <button class="category-link" id="category-link-5" data-href="#/category?id=5">Teknologi</button>
+                    <button class="category-link" id="category-link-6" data-href="#/category?id=6">Kultur</button>
                     <!--a class="category-link" id="category-link-7" href="#/category?id=7">Super</a -->
                 </div>
 

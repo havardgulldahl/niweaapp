@@ -1,5 +1,11 @@
-# http://www.impressivewebs.com/css3-click-chart/
-# http://www.w3.org/TR/css3-multicol/
+/* this is the stylesheet specifically targeting portait mode */
+
+
+/* hide landscape content */
+
+.landscape {
+    display: none;
+}
 
 .content .story.big {
 	position: relative;
@@ -14,16 +20,28 @@
 	position: absolute;
 	top: -10px;
 	left: 0;
-	clip: rect(10px, 735px, 395px, 0px);
 }
 
 .content .story.small {
-	width: 345px;
+    clear: both;
+	width: auto;
 	border-bottom: 1px solid #DDD;
 }
 
-.content .story.small:last-child,
-.content .story.small:nth-child(4) {
+.content .story.small .storyimg {
+    height: 140px;
+    float: left; 
+    margin-right: 1em;
+}
+
+.content .story.small img {
+	width: 135px;
+    box-shadow: 0;
+    -webkit-box-shadow: none;
+    border-radius: 3px;
+}
+
+.content .story.small:last-child {
 	border-bottom: 0;
 }
 
@@ -31,12 +49,8 @@
 	padding-left: 0;
 }
 
-.content .story.small:nth-child(odd) {
-	border-right: 0;
-}
-
 .content .story.long .img {
-	width: 48%;
+	width: 100%;
 }
 
 .content .story.long .text {

@@ -1,3 +1,15 @@
+/* this is the stylesheet specifically targeting landscape mode */
+
+/* 
+ TODO: implement multicol
+ http://www.w3.org/TR/css3-multicol/
+ http://www.impressivewebs.com/css3-click-chart/ */
+
+/* hide portrait content */
+.portrait {
+    display: none;
+}
+
 .content .story.big {
 	border-bottom: 0;
 }
@@ -7,15 +19,22 @@
 	height: 385px;
 }
 
-.content .story.small:nth-child(2) .title {
-	padding-top: 0;
-}
-
-.content .story.small:last-child {
-	border-bottom: 0;
+.content .story.small:nth-child(odd) {
+	border-right: 0;
 }
 
 .content .story.small {
-	border-right: 0;
-	border-bottom: 1px solid #DDD;
+	padding: 0 15px;
+	border-right: 1px solid #DDD;
+	width: 305px;
 }
+
+.content .story.long .text {
+    -webkit-column-width: 230px;
+    -webkit-column-gap: 35px;
+    -moz-column-width: 230px;
+    -moz-column-gap: 35px;
+    column-width: 230px;
+    column-gap: 35px;
+}
+

@@ -1,8 +1,3 @@
-/* Load Google Font API */
-@import url(http://fonts.googleapis.com/css?family=Cantarell:regular,bold&subset=latin);
-@import url(http://fonts.googleapis.com/css?family=Philosopher&subset=latin);
-@import url(http://fonts.googleapis.com/css?family=Neuton&subset=latin);
-
 * {
 	font-size: 1em;
 }
@@ -21,7 +16,7 @@ body.working {
 	position: relative;
 	border-bottom: 2px solid #EEE;
 	margin: 0.2em 0 0.6em 0;
-	height: 20px;
+	height: 50px;
 }
 
 .header div#logso {
@@ -48,7 +43,7 @@ body.working {
     -webkit-transform: rotate(35deg);
     background-color: #fff;
     border-radius: 8px;
-    font-family: 'Cantarell', arial;
+    font-family: 'Helvetica', arial;
     z-index: 21;
 }
 
@@ -61,17 +56,16 @@ body.working {
 
 .header div#category a {
 	font-size: 0.7em;
-	font-family: 'Helvetica Neue', Arial, sans-serif;
+	font-family: 'Helvetica', Arial, sans-serif;
     text-transform: uppercase;
 	font-weight: normal;
     text-decoration: none; 
     color: #ccc;
 }
 
-.header div#category a.current {
-    color: #000; 
-    font-size: 0.9em; 
-    font-weigth: 900;
+.header div#category button.current {
+    -webkit-border-image: url(http://192.168.0.20/niwea/media/images/blueButton.png) 0 14 0 14 stretch
+stretch;
 }
 
 .header #category-99-settings {
@@ -84,12 +78,30 @@ body.working {
     border-radius: 9px;
     -webkit-border-radius: 9px;
     -moz-border-radius: 9px;
-    -webkit-transition: height 1s ease;
-    -moz-transition: height 1s ease;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+}
+
+.header #category-99-close-menu {
+    width: 100%;
 }
 
 .header #category-99-toggle-menu {
     cursor: help;
+}
+
+#menu-overlay {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index:1001;
+    -moz-opacity: 0.4;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    z-index: 8;
 }
 
 .header p {
@@ -100,7 +112,6 @@ body.working {
 }
 
 .content .story.long {
-	max-width: 1010px;
 	text-align: justify;
 	font-size: 1em;
 	padding-right: 10px
@@ -109,7 +120,6 @@ body.working {
 .title {
 	text-align: left;
 }
-
 
 .content .story.big {
 	border-right: 1px solid #DDD;
@@ -121,10 +131,7 @@ body.working {
 
 .content .story.small {
 	float: left;
-	width: 305px;
-	min-height: 140px;
-	padding: 0 15px;
-	border-right: 1px solid #DDD;
+	min-height: 160px;
 }
 
 .content .story a {
@@ -139,7 +146,7 @@ body.working {
 	padding: 0.4em 0 0.2em 0;
 	font-size: 2em;
 	line-height: 1.3em;
-    font-family: 'Philosopher', 'Verdana', sans-serif;
+    font-family: 'Helvetica', sans-serif;
 
 }
 
@@ -220,7 +227,6 @@ body.working {
     border: #ccc solid 1px;
     border-width: 1px 0;
     line-height: 2em;
-    width: 50%;
 }
 
 .content .story.long .title {
@@ -234,11 +240,7 @@ body.working {
 }
 
 .content .story.long .img {
-	float: right;
-	width: 38%;
-	margin-left: 28px;
 	margin-top: 20px;
-	margin-bottom: 10px;
 }
 
 .content .story.big img {
@@ -261,7 +263,7 @@ body.working {
     font-size: 0.8em;
 	font-style: italic;
     line-height: 1em;
-    font-family: 'Neuton', serif;
+    font-family: serif;
 }
 
 .content .story.long .bodyimage img {
@@ -286,8 +288,7 @@ body.working {
 .content .story.long .text {
 	padding-top: 10px;
 	padding-bottom: 20px;
-	width: 59%;
-    font-family: 'Neuton', serif;
+    font-family: serif;
 }
 
 .content .story.long .text h2,
@@ -297,7 +298,7 @@ body.working {
 }
 
 .content .story.long .text h2 {
-    font-family: 'Philosopher', 'Verdana', sans-serif;
+    font-family: 'Helvetica',  sans-serif;
 	margin: 2em 0 0.5em 0;
     border-bottom: 1px solid #ccc;
 }
@@ -371,7 +372,6 @@ body.working {
     border-bottom-right-radius: 15px;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
-    opacity: 0.9;
     overflow-x: hidden;
     overflow-y: hidden;
 }
@@ -391,7 +391,7 @@ body.working {
 }
 
 /* emulate native iOS button */
-button {
+xbutton {
     font-family: Helvetica;
     padding: 15px; 
     border: 1px solid black;
@@ -403,8 +403,33 @@ button {
     background-color: white;
 }
 
-#category button {
-    margin: 1px;
+xbutton {
+    -webkit-appearance: push-button;
+    /* iOS design manual establishes 44px as the ideal touch target height */
+    height: 44px;
+}
+
+button {
+    /* iOS design manual establishes 44px as the ideal touch target height */
+    height: 44px;
+    /* thank you, groupaware.mobi */
+    -webkit-border-image: url(/niwea/media/images/whiteButton.png) 0 14 0 14 stretch stretch;
+    border-image: url(/niwea/media/images/whiteButton.png) 0 14 0 14 stretch stretch;
+    border-left: 12px;
+    border-right: 12px;
+    color: white;
+    background: white;
+    text-shadow: black 0px 1px 1px;
+    display: block;
+    font: normal normal bold 12px/30px Helvetica, sans-serif;
+    margin: 0px;
+    text-align: center;
+    width: 110px;
+}
+
+#category > button {
+    float: left; 
+    margin: 0 5px;
 }
 
 /* css3 slide show 
@@ -430,9 +455,15 @@ button {
     -moz-transition: all linear 500ms;
     -webkit-transition: all linear 500ms;
 }
-#picturegallery img {
+
+#picturegallery img.aspect-f169 {
     height: 507px;
     width: 900px;
+}
+
+#picturegallery img.aspect-f34 {
+    height: 507px;
+    width: auto;
 }
 
 #picturegallery div:first-child {
@@ -456,4 +487,15 @@ button {
     top: 0px;
 }
 
+#playpause {
+    -webkit-appearance: media-play-button;
+}
+
+#prev {
+    -webkit-appearance: media-seek-back-button;
+}
+
+#next {
+    -webkit-appearance: media-seek-forward-button;
+}
 

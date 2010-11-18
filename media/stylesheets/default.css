@@ -6,7 +6,7 @@ body {
 }
 
 .big, .small {
-	cursor: pointer;
+       cursor: pointer;
 }
 
 * {

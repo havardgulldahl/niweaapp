@@ -86,8 +86,10 @@
        <xsl:variable name="caption"
         select='pp:sub-components/pp:sub-component[@group="caption"]'/>
         <div>
-          <xsl:attribute name="class">galleryimagebox size-<xsl:value-of select="$size"/></xsl:attribute>
-           <img class="galleryimage" alt="{@name}">
+          <xsl:attribute name="class">galleryimagebox size-<xsl:value-of select="$size"/>
+          </xsl:attribute>
+           <img alt="{@name}">
+             <xsl:attribute name="class">galleryimage aspect-<xsl:value-of select="$aspect"/></xsl:attribute>
              <xsl:attribute name="id"><xsl:value-of select="generate-id()"/></xsl:attribute>
              <xsl:attribute name="src"><xsl:value-of select="$imgurl"/></xsl:attribute>
              <xsl:attribute name="data-size"><xsl:value-of select="$size"/></xsl:attribute>
